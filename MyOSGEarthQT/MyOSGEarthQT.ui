@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MyOSGEarthQTClass</class>
+ <widget class="QMainWindow" name="MyOSGEarthQTClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1025</width>
+    <height>730</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MyOSGEarthQT</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>视图区</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="osgQtView" name="openGLWidget"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1025</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="Analysis">
+    <property name="title">
+     <string>分析</string>
+    </property>
+    <addaction name="VisibilityAnalysis"/>
+    <addaction name="ViewshedAnalysis"/>
+    <addaction name="RadarAnalysis"/>
+    <addaction name="ClearAnalysis"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="ParamSetting">
+    <property name="title">
+     <string>参数设置</string>
+    </property>
+    <addaction name="SetLosHeight"/>
+   </widget>
+   <addaction name="Analysis"/>
+   <addaction name="ParamSetting"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="VisibilityAnalysis">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>通视分析</string>
+   </property>
+   <property name="toolTip">
+    <string>通视分析</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+1</string>
+   </property>
+  </action>
+  <action name="ViewshedAnalysis">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>视域分析</string>
+   </property>
+   <property name="toolTip">
+    <string>视域分析</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+2</string>
+   </property>
+  </action>
+  <action name="RadarAnalysis">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>雷达分析</string>
+   </property>
+   <property name="toolTip">
+    <string>雷达分析</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+3</string>
+   </property>
+  </action>
+  <action name="ClearAnalysis">
+   <property name="text">
+    <string>清除分析</string>
+   </property>
+   <property name="toolTip">
+    <string>清除分析</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
+   </property>
+  </action>
+  <action name="SetLosHeight">
+   <property name="text">
+    <string>设置视高</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>osgQtView</class>
+   <extends>QOpenGLWidget</extends>
+   <header>osgqtview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="MyOSGEarthQT.qrc"/>
+ </resources>
+ <connections/>
+</ui>
