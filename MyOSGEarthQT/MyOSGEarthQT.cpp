@@ -3,6 +3,9 @@
 #include <QDebug>
 #include <QLabel>
 #include <osg/Depth>
+
+#include <osgEarthUtil/MeasureTool>
+
 //===============================================================================
 #include <osgEarth/GLUtils>
 #include <osgEarthUtil/TerrainProfile>
@@ -297,9 +300,27 @@ public:
 	osg::Vec3d _start;
 	osg::Vec3d _end;
 };
+// 测量距离
+class MyMeasureToolCallback : public osgEarth::Util::MeasureToolHandler::MeasureToolEventHandler
+{
+public:
+	MyMeasureToolCallback(osgEarth::Util::Controls::LabelControl* label) :
+		_label(label)
+	{
+	}
+
+	virtual void onDistanceChanged(osgEarth::Util::MeasureToolHandler* sender, double distance)
+	{
+		std::stringstream ss;
+		ss << "Distance = " << std::setprecision(10) << distance << "m" << std::endl;
+		std::string str;
+		str = ss.str();
+		_label->setText(str);
+	}
+	osgEarth::Util::Controls::LabelControl* _label;
+};
 
 //===============================================================================
-
 
 MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	: QMainWindow(parent)
@@ -361,6 +382,22 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	grid->setControl(0, 0, new osgEarth::Util::Controls::LabelControl("Mouse:"));
 	grid->setControl(1, 0, mouseLabel);
 
+	//grid->setControl(0, 1, new osgEarth::Util::Controls::LabelControl("Distance:"));
+	//auto labelDistance = new osgEarth::Util::Controls::LabelControl();
+	//labelDistance->setFont(osgEarth::Registry::instance()->getDefaultFont());
+	//labelDistance->setFontSize(24.0f);
+	//labelDistance->setHorizAlign(osgEarth::Util::Controls::Control::ALIGN_LEFT);
+	//labelDistance->setText("click to measure");
+	//grid->setControl(1, 1, labelDistance);
+
+	////Create the MeasureToolHandler
+	//auto measureTool = new osgEarth::Util::MeasureToolHandler(m_mapNode);
+	//measureTool->setIntersectionMask(0x1);
+	//ui.openGLWidget->getViewer()->addEventHandler(measureTool);
+
+	////Add a callback to update the label when the distance changes
+	//measureTool->addEventHandler(new MyMeasureToolCallback(labelDistance));
+
 	canvas->addControl(grid);
 
 	//double backgroundWidth = 500;
@@ -369,7 +406,7 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	//double graphWidth = 200;
 	//double graphHeight = 100;
 
-	//Add the hud
+	//// Add the hud
 	//osg::Camera* hud = createHud(backgroundWidth, backgroundHeight);
 	//m_world->addChild(hud);
 
@@ -394,8 +431,8 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	m_PickEvent = new PickEvent(_lab, m_mapNode.get(), m_losGroup);
 	ui.openGLWidget->getViewer()->addEventHandler(m_PickEvent);
 
-	osg::ref_ptr<osgEarth::Util::EarthManipulator> em = dynamic_cast<osgEarth::Util::EarthManipulator*>(ui.openGLWidget->getViewer()->getCameraManipulator());
-	em->setViewpoint(osgEarth::Viewpoint(NULL, 87.43, 27.18, 2060.66, -2.5, -10, 20000), 2);
+	//osg::ref_ptr<osgEarth::Util::EarthManipulator> em = dynamic_cast<osgEarth::Util::EarthManipulator*>(ui.openGLWidget->getViewer()->getCameraManipulator());
+	//em->setViewpoint(osgEarth::Viewpoint(NULL, 87.43, 27.18, 2060.66, -2.5, -10, 20000), 2);
 }
 
 void MyOSGEarthQT::on_VisibilityAnalysis(bool checked)
