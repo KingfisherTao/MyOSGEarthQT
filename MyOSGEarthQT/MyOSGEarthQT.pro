@@ -33,7 +33,6 @@ win32 {
 			-losgEarthSymbologyd \
 			-losgEarthAnnotationd
 
-		MOC_DIR += ./x64/debug/moc
 		OBJECTS_DIR += debug
 		DESTDIR = ../x64/debug
 		CONFIG += debug console
@@ -60,7 +59,6 @@ win32 {
 			-losgEarthSymbology \
 			-losgEarthAnnotation
 		
-		MOC_DIR += ./x64/Release/moc
 		OBJECTS_DIR += Release
 		DESTDIR = ../x64/Release
 		CONFIG += release console
@@ -80,8 +78,9 @@ unix {
     }
 }
 
-UI_DIR += ./MyOSGEarthQT.ui
-RCC_DIR += ./Resources
+UI_DIR += .
+MOC_DIR += .
+RCC_DIR += .
 DEPENDPATH += -L"<LIBPATH>"
 HEADERS += $$files(./*.h)
 SOURCES += $$files(./*.cpp)

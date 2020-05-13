@@ -4,8 +4,6 @@
 #include <QLabel>
 #include <osg/Depth>
 
-#include <osgEarthUtil/MeasureTool>
-
 //===============================================================================
 #include <osgEarth/GLUtils>
 #include <osgEarthUtil/TerrainProfile>
@@ -382,44 +380,51 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	grid->setControl(0, 0, new osgEarth::Util::Controls::LabelControl("Mouse:"));
 	grid->setControl(1, 0, mouseLabel);
 
-	//grid->setControl(0, 1, new osgEarth::Util::Controls::LabelControl("Distance:"));
-	//auto labelDistance = new osgEarth::Util::Controls::LabelControl();
-	//labelDistance->setFont(osgEarth::Registry::instance()->getDefaultFont());
-	//labelDistance->setFontSize(24.0f);
-	//labelDistance->setHorizAlign(osgEarth::Util::Controls::Control::ALIGN_LEFT);
-	//labelDistance->setText("click to measure");
-	//grid->setControl(1, 1, labelDistance);
+	grid->setControl(0, 1, new osgEarth::Util::Controls::LabelControl("Distance:"));
+	auto labelDistance = new osgEarth::Util::Controls::LabelControl();
+	labelDistance->setFont(osgEarth::Registry::instance()->getDefaultFont());
+	labelDistance->setFontSize(24.0f);
+	labelDistance->setHorizAlign(osgEarth::Util::Controls::Control::ALIGN_LEFT);
+	labelDistance->setText("click to measure");
+	grid->setControl(1, 1, labelDistance);
 
-	////Create the MeasureToolHandler
-	//auto measureTool = new osgEarth::Util::MeasureToolHandler(m_mapNode);
-	//measureTool->setIntersectionMask(0x1);
-	//ui.openGLWidget->getViewer()->addEventHandler(measureTool);
+	//Create the MeasureToolHandler
+	auto measureTool = new osgEarth::Util::MeasureToolHandler(m_mapNode);
+	measureTool->setIntersectionMask(0x2);
+	ui.openGLWidget->getViewer()->addEventHandler(measureTool);
 
-	////Add a callback to update the label when the distance changes
-	//measureTool->addEventHandler(new MyMeasureToolCallback(labelDistance));
+	//Add a callback to update the label when the distance changes
+	measureTool->addEventHandler(new MyMeasureToolCallback(labelDistance));
+
+	osgEarth::Symbology::Style style = measureTool->getLineStyle();
+	style.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->color() = osgEarth::Symbology::Color::Red;
+	style.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 2.0f;
+	style.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->stipple() = 255;
+	measureTool->setLineStyle(style);
 
 	canvas->addControl(grid);
 
-	//double backgroundWidth = 500;
-	//double backgroundHeight = 500;
+	double backgroundWidth = 500;
+	double backgroundHeight = 500;
 
-	//double graphWidth = 200;
-	//double graphHeight = 100;
+	double graphWidth = 200;
+	double graphHeight = 100;
 
-	//// Add the hud
-	//osg::Camera* hud = createHud(backgroundWidth, backgroundHeight);
-	//m_world->addChild(hud);
+	// Add the hud
+	osg::Camera* hud = createHud(backgroundWidth, backgroundHeight);
+	m_world->addChild(hud);
 
-	//osg::ref_ptr< osgEarth::Util::TerrainProfileCalculator > calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode,
-	//	osgEarth::GeoPoint(m_mapNode->getMapSRS(), -124.0, 40.0),
-	//	osgEarth::GeoPoint(m_mapNode->getMapSRS(), -75.1, 39.2)
-	//);
+	osg::ref_ptr< osgEarth::Util::TerrainProfileCalculator > calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode,
+		osgEarth::GeoPoint(m_mapNode->getMapSRS(), -124.0, 40.0),
+		osgEarth::GeoPoint(m_mapNode->getMapSRS(), -75.1, 39.2)
+	);
 
-	//osg::Group* profileNode = new TerrainProfileGraph(calculator.get(), graphWidth, graphHeight);
-	//hud->addChild(profileNode);
-	//ui.openGLWidget->getViewer()->addEventHandler(new DrawProfileEventHandler(m_mapNode, m_mapNode, calculator.get()));
+	osg::Group* profileNode = new TerrainProfileGraph(calculator.get(), graphWidth, graphHeight);
+	hud->addChild(profileNode);
+	ui.openGLWidget->getViewer()->addEventHandler(new DrawProfileEventHandler(m_mapNode, m_mapNode, calculator.get()));
 
 	ui.openGLWidget->getViewer()->addEventHandler(new osgEarth::Util::MouseCoordsTool(m_mapNode, mouseLabel));
+
 	ui.openGLWidget->getViewer()->setSceneData(m_world.get());
 
 	connect(ui.VisibilityAnalysis, &QAction::triggered, this, &MyOSGEarthQT::on_VisibilityAnalysis);
@@ -431,8 +436,8 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	m_PickEvent = new PickEvent(_lab, m_mapNode.get(), m_losGroup);
 	ui.openGLWidget->getViewer()->addEventHandler(m_PickEvent);
 
-	//osg::ref_ptr<osgEarth::Util::EarthManipulator> em = dynamic_cast<osgEarth::Util::EarthManipulator*>(ui.openGLWidget->getViewer()->getCameraManipulator());
-	//em->setViewpoint(osgEarth::Viewpoint(NULL, 87.43, 27.18, 2060.66, -2.5, -10, 20000), 2);
+	osg::ref_ptr<osgEarth::Util::EarthManipulator> em = dynamic_cast<osgEarth::Util::EarthManipulator*>(ui.openGLWidget->getViewer()->getCameraManipulator());
+	em->setViewpoint(osgEarth::Viewpoint(NULL, 87.43, 27.18, 2060.66, -2.5, -10, 20000), 2);
 }
 
 void MyOSGEarthQT::on_VisibilityAnalysis(bool checked)

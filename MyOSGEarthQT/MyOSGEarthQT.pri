@@ -9,11 +9,13 @@ message("You are running qmake on a generated .pro file. This may not work!")
 
 HEADERS += ./osgQtView.h \
     ./PickEvent.h \
-    ./MyOSGEarthQT.h
+    ./MyOSGEarthQT.h \
+    ./SetLosHeight.h
 SOURCES += ./main.cpp \
     ./MyOSGEarthQT.cpp \
     ./osgQtView.cpp \
-    ./PickEvent.cpp
+    ./PickEvent.cpp \
+    ./SetLosHeight.cpp
 FORMS += ./MyOSGEarthQT.ui \
-    $$PWD/SetLosHeight.ui
+    ./SetLosHeight.ui
 RESOURCES += MyOSGEarthQT.qrc
