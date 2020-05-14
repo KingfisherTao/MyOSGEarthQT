@@ -1,5 +1,5 @@
 #include "osgQtView.h"
-
+#include <osgEarthUtil/ExampleResources>
 
 osgQtView::osgQtView(QWidget *parent, Qt::WindowFlags f, osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget(parent, f)
 {
@@ -20,6 +20,7 @@ QWidget *osgQtView::addViewWidget(osgQt::GraphicsWindowQt *gw)
 	m_viewer = new osgViewer::Viewer;
 	this->addView(m_viewer);
 	m_viewer->setCameraManipulator(new osgEarth::Util::EarthManipulator);
+	osgEarth::Util::MapNodeHelper().configureView(m_viewer);
 
 	osg::Camera* camera = m_viewer->getCamera();
 	camera->setGraphicsContext(gw);

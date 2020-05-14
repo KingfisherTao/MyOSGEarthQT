@@ -78,7 +78,7 @@ osgEarthUtild.lib
       <DebugInformationFormat />
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <AdditionalIncludeDirectories>C:\Qt\Qt5.14.0\5.14.0\msvc2017_64\include\QtOpenGL;E:\OSG\OpenSceneGraph\include;E:\OSG\osgQt\include;E:\OSG\OpenSceneGraphEarth\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Qt\Qt5.14.0\5.14.0\msvc2017_64\include\QtOpenGL;E:\OSG\OpenSceneGraph\include;E:\OSG\osgQt\include;E:\OSG\OpenSceneGraphEarth\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

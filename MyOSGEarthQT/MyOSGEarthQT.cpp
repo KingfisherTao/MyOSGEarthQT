@@ -363,7 +363,7 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	m_losGroup = new osg::Group();
 	m_losGroup->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	m_losGroup->getOrCreateStateSet()->setAttributeAndModes(new osg::Depth(osg::Depth::Function::ALWAYS));
-	m_mapNode->addChild(m_losGroup);
+	m_mapNode->addChild(m_losGroup.get());
 
 	// 左上角的UI
 	osgEarth::Util::Controls::ControlCanvas* canvas = new osgEarth::Util::Controls::ControlCanvas();
@@ -399,10 +399,7 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	osgEarth::Symbology::Style style = measureTool->getLineStyle();
 	style.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->color() = osgEarth::Symbology::Color::Red;
 	style.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 2.0f;
-	style.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->stipple() = 255;
 	measureTool->setLineStyle(style);
-
-	canvas->addControl(grid);
 
 	double backgroundWidth = 500;
 	double backgroundHeight = 500;
@@ -424,6 +421,8 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	ui.openGLWidget->getViewer()->addEventHandler(new DrawProfileEventHandler(m_mapNode, m_mapNode, calculator.get()));
 
 	ui.openGLWidget->getViewer()->addEventHandler(new osgEarth::Util::MouseCoordsTool(m_mapNode, mouseLabel));
+
+	canvas->addControl(grid);
 
 	ui.openGLWidget->getViewer()->setSceneData(m_world.get());
 
