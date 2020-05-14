@@ -1,4 +1,6 @@
 #pragma once
+#include "CReferenceArea.h"
+
 #include <osgGA/GUIEventHandler>
 #include <osgEarth/MapNode>
 #include <osgViewer/Viewer>
@@ -7,9 +9,6 @@
 #include <osgEarthUtil/RadialLineOfSight>
 #include <osgEarthAnnotation/CircleNode>
 #include <osgEarthUtil/TerrainProfile>
-
-#include <osgEarthFeatures/Feature>
-#include <osgEarthAnnotation/FeatureNode>
 
 #include <QLabel>
 
@@ -25,7 +24,7 @@ class PickEvent : public osgGA::GUIEventHandler
 {
 public:
 	PickEvent(QLabel* label, osg::ref_ptr<osgEarth::MapNode> MapNode, osg::Group* losGroup);
-	~PickEvent() {}
+	~PickEvent();
 	virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) override;
 	void setActionEvent(const EnumActionEvent &ae);
 	void setLosHeight(float height);
@@ -37,9 +36,11 @@ protected:
 
 	osg::Vec3d Screen2Geo(float x, float y);
 private:
+	CReferenceArea*								m_pFA;
 	osg::ref_ptr<osgEarth::MapNode>				m_mapNode;
 	osg::ref_ptr<osgViewer::Viewer>				m_viewer;
 	osg::ref_ptr<osg::Group>					m_losGroup;
+	osg::ref_ptr<osg::Group>					m_Group;
 	const osgEarth::SpatialReference*			m_spatRef;
 
 	osg::ref_ptr<osgEarth::Util::LinearLineOfSightNode>			m_curLosNode;

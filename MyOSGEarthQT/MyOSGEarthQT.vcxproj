@@ -92,6 +92,7 @@ osgEarthUtil.lib
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CReferenceArea.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyOSGEarthQT.cpp" />
     <ClCompile Include="osgQtView.cpp" />
@@ -109,6 +110,7 @@ osgEarthUtil.lib
     <QtRcc Include="MyOSGEarthQT.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CReferenceArea.h" />
     <ClInclude Include="osgQtView.h" />
     <ClInclude Include="PickEvent.h" />
     <QtMoc Include="SetLosHeight.h" />
