@@ -89,7 +89,6 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 				m_Calculator->computeTerrainProfile(m_mapNode, _start, _end, _profile);
 				auto dis = _profile.getTotalDistance();
 				auto elevNum = _profile.getNumElevations();
-
 				
 				m_bFirstClick = true;
 			}
@@ -126,10 +125,9 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 				render->depthOffset()->automatic() = true;
 
 				osgEarth::Symbology::LineSymbol* ls = m_feature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
-				ls->stroke()->color() = osgEarth::Symbology::Color::Red;
+				ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Red, 0.2f);
 				ls->stroke()->width() = 2.0f;
 				ls->tessellation() = 150;
-				//ls->stroke()->stipple() = 255;
 
 				m_featureNode = new osgEarth::Annotation::FeatureNode(m_feature.get());
 				osgEarth::GLUtils::setLighting(m_featureNode->getOrCreateStateSet(), osg::StateAttribute::OFF);
@@ -158,36 +156,26 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 				// add 360 Ring
 				osg::Vec3d _end = m_feature->getGeometry()->back();
 				osg::Vec3d _start = m_feature->getGeometry()->front();
-
-				double _numSpokes = 50.0;
-				double delta = osg::PI * 2.0 / _numSpokes;
-
 				auto _dis = osgEarth::GeoMath::distance(_start, _end, m_spatRef);
-				_dis = osg::clampAbove(_dis, 1.0);
-				auto _centerPoint = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), _start.x(), _start.y(), m_losHeight, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
-				
-				osg::Vec3d			_centerWorld;
-
-				_centerPoint.toWorld(_centerWorld, m_mapNode->getTerrain());
-
-				osg::Vec3d up = osg::Vec3d(_centerWorld);
-				up.normalize();
-
-				osg::Vec3d side = up ^ osg::Vec3d(0, 0, 1);
 
 				m_feature->getGeometry()->clear();
-				for (unsigned int i = 0; i < (unsigned int)_numSpokes; i++)
-				{
-					double angle = delta * (double)i;
-					osg::Quat quat(angle, up);
-					osg::Vec3d spoke = quat * (side * _dis);
-					osg::Vec3d end = _centerWorld + spoke;
-					_centerPoint.fromWorld(m_spatRef->getGeographicSRS(), end);
-					m_feature->getGeometry()->push_back(_centerPoint.vec3d());
-				}
-				m_feature->getGeometry()->push_back(m_feature->getGeometry()->front());
-				m_featureNode->init();
 
+				double _numSpokes = 150.0;
+				double _delta = osg::PI * 2.0 / _numSpokes;
+				double earthRadius = m_spatRef->getEllipsoid()->getRadiusEquator();
+				double lat = osg::DegreesToRadians(_start.y());
+				double lon = osg::DegreesToRadians(_start.x());
+				double rM = _dis;
+				for (int i = (unsigned int)_numSpokes - 1; i >= 0; --i)
+				{
+					double angle = _delta * (double)i;
+					double clat, clon;
+					osgEarth::GeoMath::destination(lat, lon, angle, rM, clat, clon, earthRadius);
+					m_feature->getGeometry()->push_back(_start);
+					m_feature->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(clon), osg::RadiansToDegrees(clat), _start.z()));
+				}
+				m_feature->getGeometry()->push_back(_start);
+				m_featureNode->init();
 			}
 		}break;
 		// 雷达分析

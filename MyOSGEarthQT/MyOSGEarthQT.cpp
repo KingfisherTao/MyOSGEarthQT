@@ -298,25 +298,6 @@ public:
 	osg::Vec3d _start;
 	osg::Vec3d _end;
 };
-// 测量距离
-class MyMeasureToolCallback : public osgEarth::Util::MeasureToolHandler::MeasureToolEventHandler
-{
-public:
-	MyMeasureToolCallback(osgEarth::Util::Controls::LabelControl* label) :
-		_label(label)
-	{
-	}
-
-	virtual void onDistanceChanged(osgEarth::Util::MeasureToolHandler* sender, double distance)
-	{
-		std::stringstream ss;
-		ss << "Distance = " << std::setprecision(10) << distance << "m" << std::endl;
-		std::string str;
-		str = ss.str();
-		_label->setText(str);
-	}
-	osgEarth::Util::Controls::LabelControl* _label;
-};
 
 //===============================================================================
 
@@ -366,63 +347,42 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	m_mapNode->addChild(m_losGroup.get());
 
 	// 左上角的UI
-	osgEarth::Util::Controls::ControlCanvas* canvas = new osgEarth::Util::Controls::ControlCanvas();
-	m_world->addChild(canvas);
-	canvas->setNodeMask(0x1 << 1);
+	//osgEarth::Util::Controls::ControlCanvas* canvas = new osgEarth::Util::Controls::ControlCanvas();
+	//m_world->addChild(canvas);
+	//canvas->setNodeMask(0x1 << 1);
 
-	osgEarth::Util::Controls::Grid* grid = new osgEarth::Util::Controls::Grid();
-	grid->setBackColor(0, 0, 0, 0.2);
-	grid->setAbsorbEvents(true);
-	grid->setVertAlign(osgEarth::Util::Controls::Control::ALIGN_TOP);
+	//osgEarth::Util::Controls::Grid* grid = new osgEarth::Util::Controls::Grid();
+	//grid->setBackColor(0, 0, 0, 0.2);
+	//grid->setAbsorbEvents(true);
+	//grid->setVertAlign(osgEarth::Util::Controls::Control::ALIGN_TOP);
 
 	// 左上角 UI 中的 lab
-	auto mouseLabel = new osgEarth::Util::Controls::LabelControl();
-	grid->setControl(0, 0, new osgEarth::Util::Controls::LabelControl("Mouse:"));
-	grid->setControl(1, 0, mouseLabel);
+	//auto mouseLabel = new osgEarth::Util::Controls::LabelControl();
+	//grid->setControl(0, 0, new osgEarth::Util::Controls::LabelControl("Mouse:"));
+	//grid->setControl(1, 0, mouseLabel);
 
-	grid->setControl(0, 1, new osgEarth::Util::Controls::LabelControl("Distance:"));
-	auto labelDistance = new osgEarth::Util::Controls::LabelControl();
-	labelDistance->setFont(osgEarth::Registry::instance()->getDefaultFont());
-	labelDistance->setFontSize(24.0f);
-	labelDistance->setHorizAlign(osgEarth::Util::Controls::Control::ALIGN_LEFT);
-	labelDistance->setText("click to measure");
-	grid->setControl(1, 1, labelDistance);
+	//double backgroundWidth = 500;
+	//double backgroundHeight = 500;
 
-	//Create the MeasureToolHandler
-	auto measureTool = new osgEarth::Util::MeasureToolHandler(m_mapNode);
-	measureTool->setIntersectionMask(0x2);
-	ui.openGLWidget->getViewer()->addEventHandler(measureTool);
+	//double graphWidth = 200;
+	//double graphHeight = 100;
 
-	//Add a callback to update the label when the distance changes
-	measureTool->addEventHandler(new MyMeasureToolCallback(labelDistance));
+	//// Add the hud
+	//osg::Camera* hud = createHud(backgroundWidth, backgroundHeight);
+	//m_world->addChild(hud);
 
-	osgEarth::Symbology::Style style = measureTool->getLineStyle();
-	style.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->color() = osgEarth::Symbology::Color::Red;
-	style.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 2.0f;
-	measureTool->setLineStyle(style);
+	//osg::ref_ptr< osgEarth::Util::TerrainProfileCalculator > calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode,
+	//	osgEarth::GeoPoint(m_mapNode->getMapSRS(), -124.0, 40.0),
+	//	osgEarth::GeoPoint(m_mapNode->getMapSRS(), -75.1, 39.2)
+	//);
 
-	double backgroundWidth = 500;
-	double backgroundHeight = 500;
+	//osg::Group* profileNode = new TerrainProfileGraph(calculator.get(), graphWidth, graphHeight);
+	//hud->addChild(profileNode);
+	//ui.openGLWidget->getViewer()->addEventHandler(new DrawProfileEventHandler(m_mapNode, m_mapNode, calculator.get()));
 
-	double graphWidth = 200;
-	double graphHeight = 100;
+	//ui.openGLWidget->getViewer()->addEventHandler(new osgEarth::Util::MouseCoordsTool(m_mapNode, mouseLabel));
 
-	// Add the hud
-	osg::Camera* hud = createHud(backgroundWidth, backgroundHeight);
-	m_world->addChild(hud);
-
-	osg::ref_ptr< osgEarth::Util::TerrainProfileCalculator > calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode,
-		osgEarth::GeoPoint(m_mapNode->getMapSRS(), -124.0, 40.0),
-		osgEarth::GeoPoint(m_mapNode->getMapSRS(), -75.1, 39.2)
-	);
-
-	osg::Group* profileNode = new TerrainProfileGraph(calculator.get(), graphWidth, graphHeight);
-	hud->addChild(profileNode);
-	ui.openGLWidget->getViewer()->addEventHandler(new DrawProfileEventHandler(m_mapNode, m_mapNode, calculator.get()));
-
-	ui.openGLWidget->getViewer()->addEventHandler(new osgEarth::Util::MouseCoordsTool(m_mapNode, mouseLabel));
-
-	canvas->addControl(grid);
+	//canvas->addControl(grid);
 
 	ui.openGLWidget->getViewer()->setSceneData(m_world.get());
 
