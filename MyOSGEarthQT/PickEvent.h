@@ -1,5 +1,6 @@
 #pragma once
 #include "CReferenceArea.h"
+#include "DrawLineThread.h"
 
 #include <osgGA/GUIEventHandler>
 #include <osgEarth/MapNode>
@@ -23,7 +24,7 @@ enum EnumActionEvent
 class PickEvent : public osgGA::GUIEventHandler
 {
 public:
-	PickEvent(QLabel* label, osg::ref_ptr<osgEarth::MapNode> MapNode, osg::Group* losGroup);
+	PickEvent(QLabel* label, osgEarth::MapNode* MapNode, osg::Group* losGroup);
 	~PickEvent();
 	virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) override;
 	void setActionEvent(const EnumActionEvent &ae);
@@ -37,6 +38,7 @@ protected:
 	osg::Vec3d Screen2Geo(float x, float y);
 private:
 	CReferenceArea*								m_pFA;
+	DrawLineThread*								m_pDT;
 	osg::ref_ptr<osgEarth::MapNode>				m_mapNode;
 	osg::ref_ptr<osgViewer::Viewer>				m_viewer;
 	osg::ref_ptr<osg::Group>					m_losGroup;

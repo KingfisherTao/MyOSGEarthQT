@@ -3,7 +3,7 @@
 #include <osg/Depth>
 #include <osgEarth/GLUtils>
 
-CReferenceArea::CReferenceArea(osg::ref_ptr<osgEarth::MapNode> mapNode):
+CReferenceArea::CReferenceArea(osgEarth::MapNode* mapNode):
 	m_mapNode(mapNode),
 	m_spatRef(mapNode->getMapSRS()),
 	m_numSpokes(0.0),
@@ -22,8 +22,8 @@ CReferenceArea::CReferenceArea(osg::ref_ptr<osgEarth::MapNode> mapNode):
 	render_Circle->depthOffset()->automatic() = true;
 
 	osgEarth::Symbology::LineSymbol* ls_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
-	ls_Circle->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 0.2f);
-	ls_Circle->stroke()->width() = 2.0f;
+	ls_Circle->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 1.0f);
+	ls_Circle->stroke()->width() = 4.0f;
 	ls_Circle->tessellation() = 150;
 
 	m_CircleNode = new osgEarth::Annotation::FeatureNode(m_CircleFeature.get());
@@ -53,8 +53,9 @@ void CReferenceArea::init()
 		double angle = _delta * (double)i;
 		double clat, clon;
 		osgEarth::GeoMath::destination(lat, lon, angle, m_radius, clat, clon, earthRadius);
-		m_CircleFeature->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(clon), osg::RadiansToDegrees(clat), m_start.z()));
+		m_CircleFeature->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(clon), osg::RadiansToDegrees(clat), 0.0));
 	}
+
 	m_CircleFeature->getGeometry()->push_back(m_CircleFeature->getGeometry()->front());
 	m_CircleNode->init();
 }

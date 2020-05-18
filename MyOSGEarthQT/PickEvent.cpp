@@ -2,7 +2,7 @@
 #include <QDebug>
 
 
-PickEvent::PickEvent(QLabel* label, osg::ref_ptr<osgEarth::MapNode> mapNode, osg::Group* losGroup) :
+PickEvent::PickEvent(QLabel* label, osgEarth::MapNode* mapNode, osg::Group* losGroup) :
 	m_ActionEvent(EnumActionEvent::ActionNull),
 	m_Label(label),
 	m_mapNode(mapNode),
@@ -40,8 +40,9 @@ PickEvent::PickEvent(QLabel* label, osg::ref_ptr<osgEarth::MapNode> mapNode, osg
 	render->depthOffset()->automatic() = true;
 
 	osgEarth::Symbology::LineSymbol* ls = m_feature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
-	ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 0.2f);
+	ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 1.0f);
 	ls->stroke()->width() = 2.0f;
+	//ls->stroke()->stipple() = 255;
 	ls->tessellation() = 150;
 
 	m_featureNode = new osgEarth::Annotation::FeatureNode(m_feature.get());
@@ -49,8 +50,8 @@ PickEvent::PickEvent(QLabel* label, osg::ref_ptr<osgEarth::MapNode> mapNode, osg
 
 	m_pFA = NULL;
 	m_pFA = new CReferenceArea(m_mapNode);
+	m_pFA->setNumSpokes(100.0);
 	m_Group->addChild(m_pFA->get());
-
 }
 
 PickEvent::~PickEvent()
@@ -117,14 +118,6 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 			}
 			else
 			{
-				// 地形剖面 dis 两次鼠标点击距离， elevNum 变化的高程count
-				auto _start = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), LastPoint, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
-				auto _end = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
-				auto _profile = m_Calculator->getProfile();
-				m_Calculator->computeTerrainProfile(m_mapNode, _start, _end, _profile);
-				auto dis = _profile.getTotalDistance();
-				auto elevNum = _profile.getNumElevations();
-				
 				m_bFirstClick = true;
 			}
 		}break;
@@ -133,6 +126,7 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 		{
 			if (m_bFirstClick)
 			{
+				
 				m_curCircleNode = new osgEarth::Annotation::CircleNode;
 				m_curCircleNode->setStyle(m_circleStyle);
 				m_curCircleNode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
@@ -163,29 +157,24 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 				{
 					m_feature->getGeometry()->push_back(osg::Vec3d(Point.x(), Point.y(), 10));
 				}
-				m_featureNode->init();
 
-				m_bFirstClick = true;
+				// Analysis
+				m_pDT = new DrawLineThread(LastPoint, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 150.0, m_spatRef);
+				m_pDT->cloneGeometry(m_pFA->getGeometry());
+				m_Group->addChild(m_pDT->get());
 
-				// add Analysis
 				m_feature->getGeometry()->clear();
 				m_featureNode->dirty();
 				m_pFA->clear();
 
-				// Too
-
-
-
-
-
-
-
+				m_pDT->start();
+				m_bFirstClick = true;
 			}
 		}break;
 		// 雷达分析
 		case EnumActionEvent::RadarAnalysis:
 		{
-			// OE_WARN << "pickLeft RadarAnalysis" << std::endl;
+			// OE_INFO << "pickLeft RadarAnalysis" << std::endl;
 			if (m_bFirstClick)
 			{
 				m_bFirstClick = false;
@@ -244,7 +233,7 @@ void PickEvent::pickMove(osg::Vec3d Point)
 		// 雷达分析
 		case EnumActionEvent::RadarAnalysis:
 		{
-			// OE_WARN << "pickMove RadarAnalysis" << std::endl;
+			// OE_INFO << "pickMove RadarAnalysis" << std::endl;
 			if (!m_bFirstClick)
 			{
 
@@ -272,6 +261,12 @@ void PickEvent::RemoveAnalysis()
 	m_feature->getGeometry()->clear();
 	m_featureNode->dirty();
 	m_pFA->clear();
+	m_pDT->clear();
+	if (m_pDT != NULL)
+	{
+		delete m_pDT;
+		m_pDT = NULL;
+	}
 }
 
 osg::Vec3d PickEvent::Screen2Geo(float x, float y)

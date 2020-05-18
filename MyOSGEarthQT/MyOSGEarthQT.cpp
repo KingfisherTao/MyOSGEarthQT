@@ -347,42 +347,42 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	m_mapNode->addChild(m_losGroup.get());
 
 	// 左上角的UI
-	osgEarth::Util::Controls::ControlCanvas* canvas = new osgEarth::Util::Controls::ControlCanvas();
-	m_world->addChild(canvas);
-	canvas->setNodeMask(0x1 << 1);
+	//osgEarth::Util::Controls::ControlCanvas* canvas = new osgEarth::Util::Controls::ControlCanvas();
+	//m_world->addChild(canvas);
+	//canvas->setNodeMask(0x1 << 1);
 
-	osgEarth::Util::Controls::Grid* grid = new osgEarth::Util::Controls::Grid();
-	grid->setBackColor(0, 0, 0, 0.2);
-	grid->setAbsorbEvents(true);
-	grid->setVertAlign(osgEarth::Util::Controls::Control::ALIGN_TOP);
+	//osgEarth::Util::Controls::Grid* grid = new osgEarth::Util::Controls::Grid();
+	//grid->setBackColor(0, 0, 0, 0.2);
+	//grid->setAbsorbEvents(true);
+	//grid->setVertAlign(osgEarth::Util::Controls::Control::ALIGN_TOP);
 
-	// 左上角 UI 中的 lab
-	auto mouseLabel = new osgEarth::Util::Controls::LabelControl();
-	grid->setControl(0, 0, new osgEarth::Util::Controls::LabelControl("Mouse:"));
-	grid->setControl(1, 0, mouseLabel);
+	//// 左上角 UI 中的 lab
+	//auto mouseLabel = new osgEarth::Util::Controls::LabelControl();
+	//grid->setControl(0, 0, new osgEarth::Util::Controls::LabelControl("Mouse:"));
+	//grid->setControl(1, 0, mouseLabel);
 
-	double backgroundWidth = 500;
-	double backgroundHeight = 500;
+	//double backgroundWidth = 500;
+	//double backgroundHeight = 500;
 
-	double graphWidth = 200;
-	double graphHeight = 100;
+	//double graphWidth = 200;
+	//double graphHeight = 100;
 
-	// Add the hud
-	osg::Camera* hud = createHud(backgroundWidth, backgroundHeight);
-	m_world->addChild(hud);
+	//// Add the hud
+	//osg::Camera* hud = createHud(backgroundWidth, backgroundHeight);
+	//m_world->addChild(hud);
 
-	osg::ref_ptr< osgEarth::Util::TerrainProfileCalculator > calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode,
-		osgEarth::GeoPoint(m_mapNode->getMapSRS(), -124.0, 40.0),
-		osgEarth::GeoPoint(m_mapNode->getMapSRS(), -75.1, 39.2)
-	);
+	//osg::ref_ptr< osgEarth::Util::TerrainProfileCalculator > calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode,
+	//	osgEarth::GeoPoint(m_mapNode->getMapSRS(), -124.0, 40.0),
+	//	osgEarth::GeoPoint(m_mapNode->getMapSRS(), -75.1, 39.2)
+	//);
 
-	osg::Group* profileNode = new TerrainProfileGraph(calculator.get(), graphWidth, graphHeight);
-	hud->addChild(profileNode);
-	ui.openGLWidget->getViewer()->addEventHandler(new DrawProfileEventHandler(m_mapNode, m_mapNode, calculator.get()));
+	//osg::Group* profileNode = new TerrainProfileGraph(calculator.get(), graphWidth, graphHeight);
+	//hud->addChild(profileNode);
+	//ui.openGLWidget->getViewer()->addEventHandler(new DrawProfileEventHandler(m_mapNode, m_mapNode, calculator.get()));
 
-	ui.openGLWidget->getViewer()->addEventHandler(new osgEarth::Util::MouseCoordsTool(m_mapNode, mouseLabel));
+	//ui.openGLWidget->getViewer()->addEventHandler(new osgEarth::Util::MouseCoordsTool(m_mapNode, mouseLabel));
 
-	canvas->addControl(grid);
+	//canvas->addControl(grid);
 
 	ui.openGLWidget->getViewer()->setSceneData(m_world.get());
 

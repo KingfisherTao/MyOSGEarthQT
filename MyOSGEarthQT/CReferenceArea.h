@@ -8,11 +8,12 @@ class CReferenceArea
 {
 
 public:
-	CReferenceArea(osg::ref_ptr<osgEarth::MapNode> MapNode);
+	CReferenceArea(osgEarth::MapNode* MapNode);
 	virtual ~CReferenceArea() {}
 
 	inline osg::Group* get() { return m_CircleNode.get(); }
 	inline void setNumSpokes(double numSpokes) { m_numSpokes = numSpokes; }
+	inline osgEarth::Symbology::Geometry* getGeometry() { return m_CircleFeature->getGeometry(); }
 	void setStart(osg::Vec3d point);
 	void setRadius(double radius);
 	void init();
