@@ -46,6 +46,9 @@
     <ClCompile Include="DrawLineThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DrawCircleThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyOSGEarthQT.h">
@@ -79,6 +82,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DrawLineThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawCircleThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

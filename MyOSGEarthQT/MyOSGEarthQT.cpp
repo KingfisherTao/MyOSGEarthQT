@@ -1,6 +1,5 @@
 ﻿#include "MyOSGEarthQT.h"
 
-#include <QDebug>
 #include <QLabel>
 #include <osg/Depth>
 

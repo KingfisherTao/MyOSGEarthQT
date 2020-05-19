@@ -1,27 +1,28 @@
-#include "DrawLineThread.h"
+#include "DrawCircleThread.h"
 #include <osgEarth/GLUtils>
 
-DrawLineThread::DrawLineThread(osg::Vec3d start, double radius, double	numSpokes, const osgEarth::SpatialReference* mapSRS):
-	m_start(start),
-	m_radius(radius),
-	m_numSpokes(numSpokes), 
-	m_spatRef(mapSRS),
-	m_numSegment(100),
-	m_goodColor(0.0f, 1.0f, 0.0f, 1.0f),
-	m_badColor(1.0f, 0.0f, 0.0f, 1.0f)
+DrawCircleThread::DrawCircleThread(osg::Vec3d start, double radius, double numSpokes, osg::Group* losGroup, const osgEarth::SpatialReference* mapSRS):
+m_start(start),
+m_radius(radius),
+m_numSpokes(numSpokes),
+m_losGroup(losGroup),
+m_spatRef(mapSRS),
+m_goodColor(0.0f, 1.0f, 0.0f, 1.0f),
+m_badColor(1.0f, 0.0f, 0.0f, 1.0f)
 {
 	m_group = new osg::Group();
 	creatNode();
 }
 
-DrawLineThread::~DrawLineThread()
+DrawCircleThread::~DrawCircleThread()
 {
 	if (m_group)
 	{
 		m_group = nullptr;
 	}
 }
-void DrawLineThread::creatNode()
+
+void DrawCircleThread::creatNode()
 {
 	for (int i = 0; i < (int)m_numSpokes; i++)
 	{
@@ -37,7 +38,7 @@ void DrawLineThread::creatNode()
 		render->depthOffset()->automatic() = true;
 
 		osgEarth::Symbology::LineSymbol* ls = _feature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
-		ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Red, 0.2f);
+		ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 0.4f);
 		ls->stroke()->width() = 2.0f;
 		ls->tessellation() = 150;
 
@@ -47,7 +48,7 @@ void DrawLineThread::creatNode()
 	}
 }
 
-void DrawLineThread::run()
+void DrawCircleThread::run()
 {
 	unsigned int _num = m_group->getNumChildren();
 	osgEarth::Annotation::FeatureNode* _fNode;
@@ -55,26 +56,32 @@ void DrawLineThread::run()
 	double _earthRadius = m_spatRef->getEllipsoid()->getRadiusEquator();
 	double _lat = osg::DegreesToRadians(m_start.y());
 	double _lon = osg::DegreesToRadians(m_start.x());
-	double _tempDis = m_radius / (double)m_numSegment;
+	double _tempDis = m_radius / (double)_num;
 
 	double _delta = osg::PI * 2.0 / _num;
+
+	
 	for (unsigned int i = 0; i < _num; i++)
 	{
-		double _angle = _delta * (double)i;
 		double _clat, _clon;
-
 		_fNode = dynamic_cast<osgEarth::Annotation::FeatureNode*>(m_group->getChild(i));
-		for (unsigned int j = 0; j <= m_numSegment; j++)
+		for (unsigned int j = 0; j <= m_numSpokes; j++)
 		{
-			osgEarth::GeoMath::destination(_lat, _lon, _angle, _tempDis * j, _clat, _clon, _earthRadius);
+			double angle = _delta * (double)j;
+			osgEarth::GeoMath::destination(_lat, _lon, angle, _tempDis * (i+1), _clat, _clon, _earthRadius);
 			_fNode->getFeature()->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), m_start.z()));
 		}
 		_fNode->init();
-		OpenThreads::Thread::microSleep(50000);
 	}
+
+	while (m_pLT->isRunning())
+	{
+		OpenThreads::Thread::YieldCurrentThread();
+	}
+	m_losGroup->addChild(m_group.get());
 }
 
-void DrawLineThread::clear()
+void DrawCircleThread::clear()
 {
 	osgEarth::Annotation::FeatureNode* _fNode;
 	for (unsigned int i = 0; i < m_group->getNumChildren(); i++)

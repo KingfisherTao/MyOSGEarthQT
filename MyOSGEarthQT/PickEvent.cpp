@@ -1,6 +1,4 @@
 ﻿#include "PickEvent.h"
-#include <QDebug>
-
 
 PickEvent::PickEvent(QLabel* label, osgEarth::MapNode* mapNode, osg::Group* losGroup) :
 	m_ActionEvent(EnumActionEvent::ActionNull),
@@ -14,14 +12,16 @@ PickEvent::PickEvent(QLabel* label, osgEarth::MapNode* mapNode, osg::Group* losG
 	m_csysTitle(QString::fromLocal8Bit("坐标:"))
 {
 	m_spatRef = m_mapNode->getMapSRS();
+	// 剖面计算器
 	m_Calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode);
+
 	// m_curRosNode = NULL;
 
 	m_Group = new osg::Group();
 	m_mapNode->addChild(m_Group);
 
 	// 贴地的 圆
-	m_circleStyle.getOrCreate<osgEarth::Symbology::PolygonSymbol>()->fill()->color() = osgEarth::Color(osgEarth::Color::Blue, 0.4f);
+	m_circleStyle.getOrCreate<osgEarth::Symbology::PolygonSymbol>()->fill()->color() = osgEarth::Color(osgEarth::Color::Red, 0.3f);
 	m_circleStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->clamping() = osgEarth::Symbology::AltitudeSymbol::CLAMP_TO_TERRAIN;
 	m_circleStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->technique() = osgEarth::Symbology::AltitudeSymbol::TECHNIQUE_DRAPE;
 	m_circleStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->verticalOffset() = 0.1;
@@ -59,7 +59,7 @@ PickEvent::~PickEvent()
 	if (m_pFA)
 	{
 		delete m_pFA;
-		m_pFA = NULL;
+		m_pFA = nullptr;
 	}
 }
 bool PickEvent::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
@@ -144,6 +144,7 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 				m_feature->getGeometry()->clear();
 				m_feature->getGeometry()->push_back(osg::Vec3d(Point.x(), Point.y(), 10));
 				m_pFA->setStart(Point);
+
 				m_bFirstClick = false;
 			}
 			else
@@ -158,16 +159,30 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 					m_feature->getGeometry()->push_back(osg::Vec3d(Point.x(), Point.y(), 10));
 				}
 
+				// 地形剖面 dis 两次鼠标点击距离， elevNum 变化的高程count
+				//auto _start = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), LastPoint, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
+				//auto _end = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
+				//auto _profile = m_Calculator->getProfile();
+				//m_Calculator->computeTerrainProfile(m_mapNode, _start, _end, _profile);
+				//auto dis = _profile.getTotalDistance();
+				//auto elevNum = _profile.getNumElevations();
+
 				// Analysis
-				m_pDT = new DrawLineThread(LastPoint, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 150.0, m_spatRef);
-				m_pDT->cloneGeometry(m_pFA->getGeometry());
-				m_Group->addChild(m_pDT->get());
+				m_pLT = new DrawLineThread(LastPoint, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 150.0, m_spatRef);
+				m_losGroup->addChild(m_pLT->get());
+				m_vLT.push_back(m_pLT);
+
+				m_pCT = new DrawCircleThread(LastPoint, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 50.0, m_losGroup, m_spatRef);
+				m_pCT->setLT(m_pLT);
+				//m_losGroup->addChild(m_pCT->get());
+				m_vCT.push_back(m_pCT);
 
 				m_feature->getGeometry()->clear();
 				m_featureNode->dirty();
-				m_pFA->clear();
+				
+				m_pLT->start();
+				m_pCT->start();
 
-				m_pDT->start();
 				m_bFirstClick = true;
 			}
 		}break;
@@ -261,12 +276,23 @@ void PickEvent::RemoveAnalysis()
 	m_feature->getGeometry()->clear();
 	m_featureNode->dirty();
 	m_pFA->clear();
-	m_pDT->clear();
-	if (m_pDT != NULL)
+
+	
+	for (std::vector<DrawLineThread*>::iterator ite = m_vLT.begin(); ite != m_vLT.end(); ++ite)
 	{
-		delete m_pDT;
-		m_pDT = NULL;
+		(*ite)->clear();
+		delete *ite;
 	}
+	m_vLT.clear();
+	m_vLT.swap(std::vector<DrawLineThread*>());
+
+	for (std::vector<DrawCircleThread*>::iterator ite = m_vCT.begin(); ite != m_vCT.end(); ++ite)
+	{
+		(*ite)->clear();
+		delete *ite;
+	}
+	m_vCT.clear();
+	m_vCT.swap(std::vector<DrawCircleThread*>());
 }
 
 osg::Vec3d PickEvent::Screen2Geo(float x, float y)

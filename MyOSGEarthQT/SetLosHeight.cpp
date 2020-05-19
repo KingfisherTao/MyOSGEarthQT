@@ -1,7 +1,6 @@
 #include "SetLosHeight.h"
 #include "MyOSGEarthQT.h"
 
-#include <QDebug>
 #include <QDoubleValidator>
 
 SetLosHeight::SetLosHeight(QWidget *parent)

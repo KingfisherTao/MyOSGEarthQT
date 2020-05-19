@@ -1,6 +1,7 @@
 #pragma once
 #include "CReferenceArea.h"
 #include "DrawLineThread.h"
+#include "DrawCircleThread.h"
 
 #include <osgGA/GUIEventHandler>
 #include <osgEarth/MapNode>
@@ -38,7 +39,12 @@ protected:
 	osg::Vec3d Screen2Geo(float x, float y);
 private:
 	CReferenceArea*								m_pFA;
-	DrawLineThread*								m_pDT;
+	DrawLineThread*								m_pLT;
+	DrawCircleThread*							m_pCT;
+
+	std::vector<DrawLineThread*>				m_vLT;
+	std::vector<DrawCircleThread*>				m_vCT;
+
 	osg::ref_ptr<osgEarth::MapNode>				m_mapNode;
 	osg::ref_ptr<osgViewer::Viewer>				m_viewer;
 	osg::ref_ptr<osg::Group>					m_losGroup;
