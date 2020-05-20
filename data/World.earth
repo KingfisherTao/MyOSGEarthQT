@@ -1,0 +1,32 @@
+<map name="Guodu" type="geocentric" version="2">
+	<image name="worldTexture" driver="tms">
+        <url>./World.earth.tms_repo/worldTexture/tms.xml</url>
+    </image>
+	<elevation name="worldHeight" driver="tms">
+		<url>./World.earth.tms_repo/worldHeight/tms.xml</url>
+	</elevation>
+	
+
+	
+	<!--子午街道影像图 LV20-->
+	<!--
+		<image name="子午街道_影像" driver="gdal">
+			<url>./zwjd_yx_lv20.tif</url>
+		</image>
+	-->
+	<!--子午街道高程图 LV20-->
+	<!--
+		<heightfield name="子午街道_高程" driver="gdal">
+			<url>./zwjd_gc_lv20.tif</url>
+		</heightfield>
+	-->
+		
+	<!--文件缓存-->
+	<options>
+		<cache type="filesystem">
+		  <path>./FileCache</path>
+		</cache>
+	</options>
+</map>
+	
+	
