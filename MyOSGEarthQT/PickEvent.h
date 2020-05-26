@@ -1,6 +1,6 @@
 #pragma once
 #include "CReferenceArea.h"
-#include "DrawLineThread.h"
+#include "DrawLineCallback.h"
 #include "DrawCircleThread.h"
 
 #include <osgGA/GUIEventHandler>
@@ -39,10 +39,10 @@ protected:
 	osg::Vec3d Screen2Geo(float x, float y);
 private:
 	CReferenceArea*								m_pFA;
-	DrawLineThread*								m_pLT;
+	DrawLineCallback*							m_pLT;
 	DrawCircleThread*							m_pCT;
 
-	std::vector<DrawLineThread*>				m_vLT;
+	std::vector<DrawLineCallback*>				m_vLT;
 	std::vector<DrawCircleThread*>				m_vCT;
 
 	osg::ref_ptr<osgEarth::MapNode>				m_mapNode;
@@ -59,8 +59,10 @@ private:
 	osg::ref_ptr<osgEarth::Annotation::FeatureNode>				m_featureNode;
 	osg::ref_ptr<osgEarth::Features::Feature>					m_feature;
 
-	osg::Vec3d FirstPoint;
-	osg::Vec3d LastPoint;
+	static 	OpenThreads::Mutex g_mutex;
+
+	osg::Vec3d			FirstPoint;
+	osg::Vec3d			LastPoint;
 
 	bool m_bFirstClick;
 	bool m_bLastPoint;
@@ -71,4 +73,6 @@ private:
 	QString m_mapName;
 	QString m_csysTitle;
 	EnumActionEvent m_ActionEvent;
+
+
 };

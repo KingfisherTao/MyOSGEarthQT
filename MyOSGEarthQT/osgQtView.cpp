@@ -1,7 +1,8 @@
 #include "osgQtView.h"
 #include <osgEarthUtil/ExampleResources>
 
-osgQtView::osgQtView(QWidget *parent, Qt::WindowFlags f, osgViewer::ViewerBase::ThreadingModel threadingModel) : QWidget(parent, f)
+osgQtView::osgQtView(QWidget *parent, Qt::WindowFlags f, osgViewer::ViewerBase::ThreadingModel threadingModel) : 
+	QWidget(parent, f)
 {
 	setThreadingModel(threadingModel);
 	setKeyEventSetsDone(0);
@@ -68,5 +69,8 @@ osg::ref_ptr<osg::Camera> osgQtView::getCamera()
 
 void osgQtView::paintEvent(QPaintEvent * event)
 {
+	//MyMutex m;
+	//m.G_MyMutex.lock();
 	frame();
+	//m.G_MyMutex.unlock();
 }

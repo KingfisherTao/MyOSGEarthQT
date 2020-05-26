@@ -94,7 +94,7 @@ osgEarthUtil.lib
   <ItemGroup>
     <ClCompile Include="CReferenceArea.cpp" />
     <ClCompile Include="DrawCircleThread.cpp" />
-    <ClCompile Include="DrawLineThread.cpp" />
+    <ClCompile Include="DrawLineCallback.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyOSGEarthQT.cpp" />
     <ClCompile Include="osgQtView.cpp" />
@@ -114,7 +114,7 @@ osgEarthUtil.lib
   <ItemGroup>
     <ClInclude Include="CReferenceArea.h" />
     <ClInclude Include="DrawCircleThread.h" />
-    <ClInclude Include="DrawLineThread.h" />
+    <ClInclude Include="DrawLineCallback.h" />
     <ClInclude Include="osgQtView.h" />
     <ClInclude Include="PickEvent.h" />
     <QtMoc Include="SetLosHeight.h" />

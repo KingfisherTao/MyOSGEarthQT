@@ -1,4 +1,6 @@
 ﻿#include "PickEvent.h"
+#include <qDebug>
+
 
 PickEvent::PickEvent(QLabel* label, osgEarth::MapNode* mapNode, osg::Group* losGroup) :
 	m_ActionEvent(EnumActionEvent::ActionNull),
@@ -159,37 +161,34 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 					m_feature->getGeometry()->push_back(osg::Vec3d(Point.x(), Point.y(), 10));
 				}
 
+				m_feature->getGeometry()->clear();
+				m_featureNode->dirty();
+
 				// 地形剖面 dis 两次鼠标点击距离， elevNum 变化的高程count
-				//auto _start = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), LastPoint, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
-				//auto _end = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
 				//auto _profile = m_Calculator->getProfile();
 				//m_Calculator->computeTerrainProfile(m_mapNode, _start, _end, _profile);
 				//auto dis = _profile.getTotalDistance();
 				//auto elevNum = _profile.getNumElevations();
 
 				// Analysis
-				m_pLT = new DrawLineThread(LastPoint, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 150.0, m_spatRef);
+				auto _start = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), LastPoint, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
+				auto _end = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
+				auto _angle = osgEarth::GeoMath::bearing(osg::DegreesToRadians(_start.y()), osg::DegreesToRadians(_start.x()),
+															osg::DegreesToRadians(_end.y()), osg::DegreesToRadians(_end.x()));
+				m_pLT = new DrawLineCallback(LastPoint, _angle, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 100.0, m_losHeight, m_mapNode);
 				m_losGroup->addChild(m_pLT->get());
 				m_vLT.push_back(m_pLT);
 
-				m_pCT = new DrawCircleThread(LastPoint, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 50.0, m_losGroup, m_spatRef);
-				m_pCT->setLT(m_pLT);
-				//m_losGroup->addChild(m_pCT->get());
-				m_vCT.push_back(m_pCT);
-
-				m_feature->getGeometry()->clear();
-				m_featureNode->dirty();
-				
-				m_pLT->start();
-				m_pCT->start();
-
+				//m_pCT = new DrawCircleThread(LastPoint, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 50.0, m_losHeight, m_losGroup, m_mapNode);
+				//m_pCT->setLT(m_pLT);
+				//m_vCT.push_back(m_pCT);
+				//m_pCT->start();
 				m_bFirstClick = true;
 			}
 		}break;
 		// 雷达分析
 		case EnumActionEvent::RadarAnalysis:
 		{
-			// OE_INFO << "pickLeft RadarAnalysis" << std::endl;
 			if (m_bFirstClick)
 			{
 				m_bFirstClick = false;
@@ -217,8 +216,8 @@ void PickEvent::pickMove(osg::Vec3d Point)
 		{
 			if (!m_bFirstClick)
 			{
-				osgEarth::GeoPoint end(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), 0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
-				m_curLosNode->setEnd(end);
+				osgEarth::GeoPoint _end(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), 0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
+				m_curLosNode->setEnd(_end);
 
 			}
 		}break;
@@ -277,14 +276,8 @@ void PickEvent::RemoveAnalysis()
 	m_featureNode->dirty();
 	m_pFA->clear();
 
-	
-	for (std::vector<DrawLineThread*>::iterator ite = m_vLT.begin(); ite != m_vLT.end(); ++ite)
-	{
-		(*ite)->clear();
-		delete *ite;
-	}
 	m_vLT.clear();
-	m_vLT.swap(std::vector<DrawLineThread*>());
+	m_vLT.swap(std::vector<DrawLineCallback*>());
 
 	for (std::vector<DrawCircleThread*>::iterator ite = m_vCT.begin(); ite != m_vCT.end(); ++ite)
 	{

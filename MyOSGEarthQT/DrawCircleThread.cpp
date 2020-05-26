@@ -1,14 +1,16 @@
 #include "DrawCircleThread.h"
 #include <osgEarth/GLUtils>
 
-DrawCircleThread::DrawCircleThread(osg::Vec3d start, double radius, double numSpokes, osg::Group* losGroup, const osgEarth::SpatialReference* mapSRS):
-m_start(start),
-m_radius(radius),
-m_numSpokes(numSpokes),
-m_losGroup(losGroup),
-m_spatRef(mapSRS),
-m_goodColor(0.0f, 1.0f, 0.0f, 1.0f),
-m_badColor(1.0f, 0.0f, 0.0f, 1.0f)
+DrawCircleThread::DrawCircleThread(osg::Vec3d start, double radius, double numSpokes, float losHeight, osg::Group* losGroup, osgEarth::MapNode* mapNode):
+	m_start(start),
+	m_radius(radius),
+	m_numSpokes(numSpokes),
+	m_losHeight(losHeight),
+	m_losGroup(losGroup),
+	m_mapNode(mapNode),
+	m_spatRef(mapNode->getMapSRS()),
+	m_goodColor(0.0f, 1.0f, 0.0f, 1.0f),
+	m_badColor(1.0f, 0.0f, 0.0f, 1.0f)
 {
 	m_group = new osg::Group();
 	creatNode();
@@ -38,7 +40,7 @@ void DrawCircleThread::creatNode()
 		render->depthOffset()->automatic() = true;
 
 		osgEarth::Symbology::LineSymbol* ls = _feature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
-		ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 0.4f);
+		ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 0.2f);
 		ls->stroke()->width() = 2.0f;
 		ls->tessellation() = 150;
 
@@ -69,16 +71,16 @@ void DrawCircleThread::run()
 		{
 			double angle = _delta * (double)j;
 			osgEarth::GeoMath::destination(_lat, _lon, angle, _tempDis * (i+1), _clat, _clon, _earthRadius);
-			_fNode->getFeature()->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), m_start.z()));
+			_fNode->getFeature()->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), 0.0));
 		}
 		_fNode->init();
 	}
 
-	while (m_pLT->isRunning())
+	//while (m_pLT->isRunning())
 	{
-		OpenThreads::Thread::YieldCurrentThread();
+	//	OpenThreads::Thread::YieldCurrentThread();
 	}
-	m_losGroup->addChild(m_group.get());
+	//m_losGroup->addChild(m_group.get());
 }
 
 void DrawCircleThread::clear()

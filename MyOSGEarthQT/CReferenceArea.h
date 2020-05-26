@@ -1,9 +1,8 @@
 #pragma once
-
 #include <osgEarthFeatures/Feature>
 #include <osgEarthAnnotation/FeatureNode>
 
-// 鼠标事件中，点击地面后产生的测试区域选框 包括一条距离辅助线 以及 圆形选框
+// 鼠标事件中，圆形选框
 class CReferenceArea
 {
 
@@ -12,7 +11,7 @@ public:
 	virtual ~CReferenceArea() {}
 
 	inline osg::Group* get() { return m_CircleNode.get(); }
-	inline void setNumSpokes(double numSpokes) { m_numSpokes = numSpokes; }
+	inline void setNumSpokes(double numSpokes) { m_numSpokes = numSpokes; m_start_delta = osg::PI * 2.0 / m_numSpokes; }
 	inline osgEarth::Symbology::Geometry* getGeometry() { return m_CircleFeature->getGeometry(); }
 	void setStart(osg::Vec3d point);
 	void setRadius(double radius);
@@ -31,5 +30,9 @@ private:
 	osg::Vec3d	m_end;
 	double		m_radius;
 	double		m_numSpokes;
+
+	double		m_start_lat;
+	double		m_start_lon;
+	double		m_start_delta;
 };
 

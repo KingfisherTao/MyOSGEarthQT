@@ -7,9 +7,11 @@ CReferenceArea::CReferenceArea(osgEarth::MapNode* mapNode):
 	m_mapNode(mapNode),
 	m_spatRef(mapNode->getMapSRS()),
 	m_numSpokes(0.0),
+	m_start_lat(0.0),
+	m_start_lon(0.0),
+	m_start_delta(0.0),
 	m_radius(0.0)
 {
-	// ³õÊ¼»¯ ·¶Î§È¦ feature
 	m_CircleFeature = new osgEarth::Features::Feature(new osgEarth::Symbology::LineString(), m_spatRef);
 	m_CircleFeature->geoInterp() = osgEarth::Features::GEOINTERP_GREAT_CIRCLE;
 
@@ -28,40 +30,38 @@ CReferenceArea::CReferenceArea(osgEarth::MapNode* mapNode):
 
 	m_CircleNode = new osgEarth::Annotation::FeatureNode(m_CircleFeature.get());
 	osgEarth::GLUtils::setLighting(m_CircleNode->getOrCreateStateSet(), osg::StateAttribute::OFF);
-
 }
 
 void CReferenceArea::init()
 {
-	const osgEarth::Distance radius = m_radius;
-	if (m_numSpokes == 0)
+	if (m_numSpokes == 0.0)
 	{
 		// automatically calculate
+		const osgEarth::Distance radius = m_radius;
 		double segLen = radius.as(osgEarth::Units::METERS) / 8.0;
 		double circumference = 2 * osg::PI* radius.as(osgEarth::Units::METERS);
 		m_numSpokes = (unsigned)::ceil(circumference / segLen);
+		m_start_delta = osg::PI * 2.0 / m_numSpokes;
 	}
 
-	// add 360 Ring
-	m_CircleFeature->getGeometry()->clear();
-	double _delta = osg::PI * 2.0 / m_numSpokes;
-	double earthRadius = m_spatRef->getEllipsoid()->getRadiusEquator();
-	double lat = osg::DegreesToRadians(m_start.y());
-	double lon = osg::DegreesToRadians(m_start.x());
+	double _angle = 0.0;
+	double _clat = 0.0, _clon = 0.0;
+
+	clear();
 	for (int i = (unsigned int)m_numSpokes - 1; i >= 0; --i)
 	{
-		double angle = _delta * (double)i;
-		double clat, clon;
-		osgEarth::GeoMath::destination(lat, lon, angle, m_radius, clat, clon, earthRadius);
-		m_CircleFeature->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(clon), osg::RadiansToDegrees(clat), 0.0));
+		_angle = m_start_delta * (double)i;
+		osgEarth::GeoMath::destination(m_start_lat, m_start_lon, _angle, m_radius, _clat, _clon, m_spatRef->getEllipsoid()->getRadiusEquator());
+		m_CircleFeature->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), 0.0));
 	}
-
 	m_CircleFeature->getGeometry()->push_back(m_CircleFeature->getGeometry()->front());
-	m_CircleNode->init();
+	m_CircleNode->dirty();
 }
 void CReferenceArea::setStart(osg::Vec3d start)
 {
 	m_start = start;
+	m_start_lat = osg::DegreesToRadians(m_start.y());
+	m_start_lon = osg::DegreesToRadians(m_start.x());
 	clear();
 }
 

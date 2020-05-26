@@ -43,10 +43,10 @@
     <ClCompile Include="CReferenceArea.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DrawLineThread.cpp">
+    <ClCompile Include="DrawCircleThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DrawCircleThread.cpp">
+    <ClCompile Include="DrawLineCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,10 +81,10 @@
     <ClInclude Include="CReferenceArea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DrawLineThread.h">
+    <ClInclude Include="DrawCircleThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DrawCircleThread.h">
+    <ClInclude Include="DrawLineCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
