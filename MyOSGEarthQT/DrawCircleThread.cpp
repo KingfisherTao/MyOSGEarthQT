@@ -73,7 +73,7 @@ void DrawCircleThread::run()
 			osgEarth::GeoMath::destination(_lat, _lon, angle, _tempDis * (i+1), _clat, _clon, _earthRadius);
 			_fNode->getFeature()->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), 0.0));
 		}
-		_fNode->init();
+		_fNode->dirty();
 	}
 
 	//while (m_pLT->isRunning())

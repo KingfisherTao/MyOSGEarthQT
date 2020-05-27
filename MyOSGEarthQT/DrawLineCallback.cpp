@@ -21,6 +21,7 @@ DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius
 
 	creatNode();
 
+	m_delta = osg::PI * 2.0 / m_numSpokes;
 	m_group->setUpdateCallback(this);
 }
 
@@ -42,7 +43,8 @@ void DrawLineCallback::creatNode()
 {
 	for (int i = 0; i < (int)m_numSpokes; i++)
 	{
-		osg::ref_ptr<osgEarth::Features::Feature> _feature = new osgEarth::Features::Feature(new osgEarth::Symbology::LineString(), m_spatRef);
+		osg::ref_ptr<osgEarth::Symbology::LineString> _ls = new osgEarth::Symbology::LineString();
+		osg::ref_ptr<osgEarth::Features::Feature> _feature = new osgEarth::Features::Feature(_ls, m_spatRef);
 		_feature->geoInterp() = osgEarth::Features::GEOINTERP_GREAT_CIRCLE;
 
 		osgEarth::Symbology::AltitudeSymbol* alt = _feature->style()->getOrCreate<osgEarth::Symbology::AltitudeSymbol>();
@@ -56,14 +58,11 @@ void DrawLineCallback::creatNode()
 		osgEarth::Symbology::LineSymbol* ls = _feature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
 		ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Red, 0.2f);
 		ls->stroke()->width() = 2.0f;
-		ls->tessellation() = 150;
 
 		osg::ref_ptr<osgEarth::Annotation::FeatureNode> _featureNode = new osgEarth::Annotation::FeatureNode(_feature.get());
 		osgEarth::GLUtils::setLighting(_featureNode->getOrCreateStateSet(), osg::StateAttribute::OFF);
 		m_group->addChild(_featureNode.get());
 	}
-
-	m_delta = osg::PI * 2.0 / m_group->getNumChildren();
 }
 
 void DrawLineCallback::setStart(osg::Vec3d start)
@@ -78,13 +77,14 @@ void DrawLineCallback::setStart(osg::Vec3d start)
 
 bool DrawLineCallback::run(osg::Object* object, osg::Object* data)
 {
-
 	osg::Group* _group = dynamic_cast<osg::Group*>(object);
 	osgEarth::Annotation::FeatureNode* _fNode = dynamic_cast<osgEarth::Annotation::FeatureNode*>(_group->getChild(m_NodeCount));
 
 	double _clat = 0.0, _clon = 0.0;
 	double _angle = m_delta * (double)m_NodeCount + m_angle;
 
+	int sum_false = 0;
+	int sum_true = 0;
 	for (unsigned int i = 0; i <= m_numSegment; i++)
 	{
 		osgEarth::GeoMath::destination(m_lat, m_lon, _angle, m_tempDis * i, _clat, _clon);
@@ -95,14 +95,15 @@ bool DrawLineCallback::run(osg::Object* object, osg::Object* data)
 		// Œﬁ’œ∞≠
 		if (m_LosNode->getHasLOS())
 		{
-
+			sum_true += 1;
 		}
 		// ”–’œ∞≠
 		else
 		{
-
+			sum_false += 1;
 		}
 	}
+	//std::cout << "sum_true = " << sum_true << "   sum_false = " << sum_false << std::endl;
 	_fNode->dirty();
 	m_NodeCount++;
 	if (m_NodeCount >= _group->getNumChildren())

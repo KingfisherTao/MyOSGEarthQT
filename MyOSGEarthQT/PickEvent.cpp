@@ -47,7 +47,7 @@ PickEvent::PickEvent(QLabel* label, osgEarth::MapNode* mapNode, osg::Group* losG
 	//ls->stroke()->stipple() = 255;
 	ls->tessellation() = 150;
 
-	m_featureNode = new osgEarth::Annotation::FeatureNode(m_feature.get());
+	m_featureNode = new osgEarth::Annotation::FeatureNode(m_feature);
 	m_Group->addChild(m_featureNode.get());
 
 	m_pFA = NULL;
@@ -175,7 +175,8 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 				auto _end = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point, osgEarth::AltitudeMode::ALTMODE_ABSOLUTE);
 				auto _angle = osgEarth::GeoMath::bearing(osg::DegreesToRadians(_start.y()), osg::DegreesToRadians(_start.x()),
 															osg::DegreesToRadians(_end.y()), osg::DegreesToRadians(_end.x()));
-				m_pLT = new DrawLineCallback(LastPoint, _angle, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 100.0, m_losHeight, m_mapNode);
+
+				m_pLT = new DrawLineCallback(LastPoint, _angle, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 150.0, m_losHeight, m_mapNode);
 				m_losGroup->addChild(m_pLT->get());
 				m_vLT.push_back(m_pLT);
 
@@ -240,7 +241,7 @@ void PickEvent::pickMove(osg::Vec3d Point)
 					m_feature->getGeometry()->back() = osg::Vec3d(Point.x(), Point.y(), 0);
 				}
 
-				m_featureNode->init();
+				m_featureNode->dirty();
 			}
 
 		}break;
@@ -277,15 +278,15 @@ void PickEvent::RemoveAnalysis()
 	m_pFA->clear();
 
 	m_vLT.clear();
-	m_vLT.swap(std::vector<DrawLineCallback*>());
+//	m_vLT.swap(std::vector<DrawLineCallback*>());
 
-	for (std::vector<DrawCircleThread*>::iterator ite = m_vCT.begin(); ite != m_vCT.end(); ++ite)
-	{
-		(*ite)->clear();
-		delete *ite;
-	}
-	m_vCT.clear();
-	m_vCT.swap(std::vector<DrawCircleThread*>());
+//	for (std::vector<DrawCircleThread*>::iterator ite = m_vCT.begin(); ite != m_vCT.end(); ++ite)
+//	{
+//		(*ite)->clear();
+//		delete *ite;
+//	}
+//	m_vCT.clear();
+//	m_vCT.swap(std::vector<DrawCircleThread*>());
 }
 
 osg::Vec3d PickEvent::Screen2Geo(float x, float y)
