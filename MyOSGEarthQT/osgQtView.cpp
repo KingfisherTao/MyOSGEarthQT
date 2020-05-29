@@ -1,5 +1,6 @@
 #include "osgQtView.h"
 #include <osgEarthUtil/ExampleResources>
+#include <osgGA/StateSetManipulator>
 
 osgQtView::osgQtView(QWidget *parent, Qt::WindowFlags f, osgViewer::ViewerBase::ThreadingModel threadingModel) : 
 	QWidget(parent, f)
@@ -13,7 +14,7 @@ osgQtView::osgQtView(QWidget *parent, Qt::WindowFlags f, osgViewer::ViewerBase::
 	m_viewwidget->show();
 
 	connect(&m_timer, &QTimer::timeout, this, &osgQtView::update);
-	m_timer.start(10);
+	m_timer.start(1);
 }
 
 QWidget *osgQtView::addViewWidget(osgQt::GraphicsWindowQt *gw)
@@ -22,6 +23,8 @@ QWidget *osgQtView::addViewWidget(osgQt::GraphicsWindowQt *gw)
 	this->addView(m_viewer);
 	m_viewer->setCameraManipulator(new osgEarth::Util::EarthManipulator);
 	osgEarth::Util::MapNodeHelper().configureView(m_viewer);
+	m_viewer->addEventHandler(new osgGA::StateSetManipulator(m_viewer->getCamera()->getOrCreateStateSet()));
+	m_viewer->addEventHandler(new osgViewer::StatsHandler);
 
 	osg::Camera* camera = m_viewer->getCamera();
 	camera->setGraphicsContext(gw);
@@ -69,8 +72,6 @@ osg::ref_ptr<osg::Camera> osgQtView::getCamera()
 
 void osgQtView::paintEvent(QPaintEvent * event)
 {
-	//MyMutex m;
-	//m.G_MyMutex.lock();
+
 	frame();
-	//m.G_MyMutex.unlock();
 }

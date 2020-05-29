@@ -52,7 +52,7 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	m_world->addChild(m_mapNode.get());
 
 	// 近地面自动裁剪
-	//ui.openGLWidget->getCamera()->addCullCallback(new osgEarth::Util::AutoClipPlaneCullCallback(m_mapNode.get()));
+	ui.openGLWidget->getCamera()->addCullCallback(new osgEarth::Util::AutoClipPlaneCullCallback(m_mapNode.get()));
 
 	// 星空
 	osg::ref_ptr<osgEarth::Util::SkyNode> skyNode = osgEarth::Util::SkyNode::create();
