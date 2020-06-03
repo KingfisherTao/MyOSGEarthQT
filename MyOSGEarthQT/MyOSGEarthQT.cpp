@@ -48,7 +48,7 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	// 世界 Group
 	m_world = new osg::Group();
 
-	m_mapNode = osgEarth::MapNode::findMapNode(osgDB::readNodeFile("../data/World.earth"));
+	m_mapNode = osgEarth::MapNode::findMapNode(osgDB::readNodeFile("../data/myWorld.earth"));
 	m_world->addChild(m_mapNode.get());
 
 	// 近地面自动裁剪
@@ -122,8 +122,8 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	m_PickEvent = new PickEvent(_lab, m_mapNode, m_losGroup);
 	ui.openGLWidget->getViewer()->addEventHandler(m_PickEvent);
 
-	osg::ref_ptr<osgEarth::Util::EarthManipulator> em = dynamic_cast<osgEarth::Util::EarthManipulator*>(ui.openGLWidget->getViewer()->getCameraManipulator());
-	em->setViewpoint(osgEarth::Viewpoint(NULL, 87.43, 27.18, 2060.66, -2.5, -10, 20000), 2);
+	//osg::ref_ptr<osgEarth::Util::EarthManipulator> em = dynamic_cast<osgEarth::Util::EarthManipulator*>(ui.openGLWidget->getViewer()->getCameraManipulator());
+	//em->setViewpoint(osgEarth::Viewpoint(NULL, 87.43, 27.18, 2060.66, -2.5, -10, 20000), 2);
 }
 
 void MyOSGEarthQT::on_VisibilityAnalysis(bool checked)

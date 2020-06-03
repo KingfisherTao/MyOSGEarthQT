@@ -112,7 +112,7 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 			{
 				auto _start = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), m_losHeight, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
 				m_curLosNode = new osgEarth::Util::LinearLineOfSightNode(m_mapNode);
-				m_curLosNode->setDisplayMode(osgEarth::Util::LineOfSight::DisplayMode::MODE_SPLIT);
+				m_curLosNode->setDisplayMode(osgEarth::Util::LineOfSight::DisplayMode::MODE_SINGLE);
 				m_curLosNode->setStart(_start);
 				m_losGroup->addChild(m_curLosNode);
 
@@ -217,8 +217,10 @@ void PickEvent::pickMove(osg::Vec3d Point)
 		{
 			if (!m_bFirstClick)
 			{
-				osgEarth::GeoPoint _end(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), 0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
+				osgEarth::GeoPoint _end(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), 0.0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
 				m_curLosNode->setEnd(_end);
+
+				qDebug() << "m_LosNode->getHasLOS() = " << m_curLosNode->getHasLOS();
 
 			}
 		}break;
