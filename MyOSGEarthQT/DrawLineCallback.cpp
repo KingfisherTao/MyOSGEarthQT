@@ -18,7 +18,7 @@ DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius
 	m_NodeCount = 0;
 
 	m_pLs = new osgEarth::Symbology::LineString[m_numSpokes];
-	m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 1.0;
+	m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 2.0;
 	m_lineStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->clamping() = osgEarth::Symbology::AltitudeSymbol::CLAMP_TO_TERRAIN;
 	m_lineStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->technique() = osgEarth::Symbology::AltitudeSymbol::TECHNIQUE_DRAPE;
 	m_lineStyle.getOrCreate<osgEarth::Symbology::RenderSymbol>()->depthOffset()->automatic() = true;
@@ -27,6 +27,7 @@ DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius
 	m_LosNode = new osgEarth::Util::LinearLineOfSightNode(m_mapNode);
 	m_LosNode->setTerrainOnly(true);
 	setStart(start);
+
 	// 初始化视线 bool 二维数组
 	m_bLosArry = nullptr;
 	m_bLosArry = new bool*[m_numSpokes];

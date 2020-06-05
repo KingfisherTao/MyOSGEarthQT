@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<tilemap tilemapservice="http://tms.osgeo.org/1.0.0" version="1.0.0">
+  <title>ZiWuH</title>
+  <abstract></abstract>
+  <srs>EPSG:4326</srs>
+  <vsrs></vsrs>
+  <boundingbox maxx="108.9535565191403065909980796" maxy="34.0840778178361603067969554" minx="108.8507415787299947851352044" miny="33.9747942464158185771339049" />
+  <origin x="-180.0000000000000000000000000" y="-90.0000000000000000000000000" />
+  <tileformat extension="tif" height="256" mime-type="image/tiff" width="256" />
+  <tilesets profile="global-geodetic">
+    <tileset href="" order="0" units-per-pixel="0.0002008104304888902458259" />
+    <tileset href="" order="1" units-per-pixel="0.0001004052152444451229130" />
+    <tileset href="" order="2" units-per-pixel="0.0000502026076222225614565" />
+    <tileset href="" order="3" units-per-pixel="0.0000251013038111112807282" />
+    <tileset href="" order="4" units-per-pixel="0.0000125506519055556403641" />
+    <tileset href="" order="5" units-per-pixel="0.0000062753259527778201821" />
+    <tileset href="" order="6" units-per-pixel="0.0000031376629763889100910" />
+    <tileset href="" order="7" units-per-pixel="0.0000015688314881944550455" />
+    <tileset href="" order="8" units-per-pixel="0.0000007844157440972275228" />
+    <tileset href="" order="9" units-per-pixel="0.0000003922078720486137614" />
+    <tileset href="" order="10" units-per-pixel="0.0000001961039360243068807" />
+    <tileset href="" order="11" units-per-pixel="0.0000000980519680121534403" />
+    <tileset href="" order="12" units-per-pixel="0.0000000490259840060767202" />
+    <tileset href="" order="13" units-per-pixel="0.0000000245129920030383601" />
+    <tileset href="" order="14" units-per-pixel="0.0000000122564960015191800" />
+    <tileset href="" order="15" units-per-pixel="0.0000000061282480007595900" />
+    <tileset href="" order="16" units-per-pixel="0.0000000030641240003797950" />
+    <tileset href="" order="17" units-per-pixel="0.0000000015320620001898975" />
+    <tileset href="" order="18" units-per-pixel="0.0000000007660310000949488" />
+    <tileset href="" order="19" units-per-pixel="0.0000000003830155000474744" />
+    <tileset href="" order="20" units-per-pixel="0.0000000001915077500237372" />
+    <tileset href="" order="21" units-per-pixel="0.0000000000957538750118686" />
+    <tileset href="" order="22" units-per-pixel="0.0000000000478769375059343" />
+  </tilesets>
+  <dataextents>
+    <dataextent maxlevel="16" maxx="108.9535565191403065909980796" maxy="34.0840778178361603067969554" minlevel="0" minx="108.8507415787299947851352044" miny="33.9747942464158185771339049" />
+  </dataextents>
+</tilemap>
