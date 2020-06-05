@@ -17,7 +17,7 @@ CReferenceArea::CReferenceArea(osgEarth::MapNode* mapNode):
 
 	osgEarth::Symbology::AltitudeSymbol* alt_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::AltitudeSymbol>();
 	alt_Circle->clamping() = alt_Circle->CLAMP_TO_TERRAIN;
-	alt_Circle->technique() = alt_Circle->TECHNIQUE_GPU;
+	alt_Circle->technique() = alt_Circle->TECHNIQUE_DRAPE;
 
 	osgEarth::Symbology::RenderSymbol* render_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::RenderSymbol>();
 	render_Circle->depthOffset()->enabled() = true;
@@ -25,8 +25,7 @@ CReferenceArea::CReferenceArea(osgEarth::MapNode* mapNode):
 
 	osgEarth::Symbology::LineSymbol* ls_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
 	ls_Circle->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 1.0f);
-	ls_Circle->stroke()->width() = 4.0f;
-	ls_Circle->tessellation() = 150;
+	ls_Circle->stroke()->width() = 1.0f;
 
 	m_CircleNode = new osgEarth::Annotation::FeatureNode(m_CircleFeature.get());
 	osgEarth::GLUtils::setLighting(m_CircleNode->getOrCreateStateSet(), osg::StateAttribute::OFF);

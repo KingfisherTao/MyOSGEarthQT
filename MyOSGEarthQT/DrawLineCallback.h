@@ -11,19 +11,22 @@ public:
 	virtual ~DrawLineCallback();
 	inline osg::Group* get() { return m_group; }
 	inline void setStart(osg::Vec3d start);
-	void creatNode();
 	virtual bool run(osg::Object* object, osg::Object* data);
 	void clear();
+
 private:
 	osg::ref_ptr<osgEarth::MapNode>							m_mapNode;
 	const osgEarth::SpatialReference*						m_spatRef;
 	osg::ref_ptr<osg::Group>								m_group;
+	osg::ref_ptr<osgEarth::Symbology::LineString>			m_pLs;
 	osg::ref_ptr<osgEarth::Util::LinearLineOfSightNode>		m_LosNode;
+	osgEarth::Annotation::Style								m_lineStyle;
 
 	osg::Vec3d	m_start;
 	osg::Vec4	m_goodColor;
 	osg::Vec4	m_badColor;
 
+	bool			**m_bLosArry;
 	int				m_NodeCount;
 	double			m_delta;
 	double			m_lon;

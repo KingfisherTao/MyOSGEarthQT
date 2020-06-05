@@ -106,7 +106,6 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 
 	//m_pDrawProfile = new DrawProfileEventHandler(m_mapNode, m_mapNode, calculator.get());
 	//ui.openGLWidget->getViewer()->addEventHandler(m_pDrawProfile);
-
 	//ui.openGLWidget->getViewer()->addEventHandler(new osgEarth::Util::MouseCoordsTool(m_mapNode, mouseLabel));
 
 	//canvas->addControl(grid);

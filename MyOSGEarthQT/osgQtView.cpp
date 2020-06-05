@@ -24,7 +24,6 @@ QWidget *osgQtView::addViewWidget(osgQt::GraphicsWindowQt *gw)
 	m_viewer->setCameraManipulator(new osgEarth::Util::EarthManipulator);
 	osgEarth::Util::MapNodeHelper().configureView(m_viewer);
 	m_viewer->addEventHandler(new osgGA::StateSetManipulator(m_viewer->getCamera()->getOrCreateStateSet()));
-	m_viewer->addEventHandler(new osgViewer::StatsHandler);
 
 	osg::Camera* camera = m_viewer->getCamera();
 	camera->setGraphicsContext(gw);

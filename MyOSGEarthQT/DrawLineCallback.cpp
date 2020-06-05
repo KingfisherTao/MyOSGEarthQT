@@ -1,5 +1,6 @@
 #include "DrawLineCallback.h"
 #include <osgEarth/GLUtils>
+#include <qDebug>
 
 DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius, double numSpokes, float losHeight, osgEarth::MapNode* mapNode):
 	m_angle(angle),
@@ -8,20 +9,38 @@ DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius
 	m_losHeight(losHeight),
 	m_mapNode(mapNode),
 	m_spatRef(mapNode->getMapSRS()),
-	m_numSegment(100),
+	m_numSegment(150),
 	m_goodColor(0.0f, 1.0f, 0.0f, 1.0f),
 	m_badColor(1.0f, 0.0f, 0.0f, 1.0f)
 {
+	// 基于分段数初始小段距离
 	m_tempDis = m_radius / (double)m_numSegment;
 	m_NodeCount = 0;
 
-	m_group = new osg::Group();
+	m_pLs = new osgEarth::Symbology::LineString[m_numSpokes];
+	m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 1.0;
+	m_lineStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->clamping() = osgEarth::Symbology::AltitudeSymbol::CLAMP_TO_TERRAIN;
+	m_lineStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->technique() = osgEarth::Symbology::AltitudeSymbol::TECHNIQUE_DRAPE;
+	m_lineStyle.getOrCreate<osgEarth::Symbology::RenderSymbol>()->depthOffset()->automatic() = true;
+
+	// 构造视线
 	m_LosNode = new osgEarth::Util::LinearLineOfSightNode(m_mapNode);
+	m_LosNode->setTerrainOnly(true);
 	setStart(start);
+	// 初始化视线 bool 二维数组
+	m_bLosArry = nullptr;
+	m_bLosArry = new bool*[m_numSpokes];
+	for (int i = 0; i < m_numSpokes; i++)
+	{
+		m_bLosArry[i] = new bool[m_numSegment];
+	}
 
-	creatNode();
-
+	// 计算每次旋转的弧度
 	m_delta = osg::PI * 2.0 / m_numSpokes;
+
+	// FeatureNode 添加的总group
+	m_group = new osg::Group();
+	osgEarth::GLUtils::setLighting(m_group->getOrCreateStateSet(), osg::StateAttribute::OFF);
 	m_group->setUpdateCallback(this);
 }
 
@@ -38,30 +57,17 @@ DrawLineCallback::~DrawLineCallback()
 		m_LosNode.release();
 		m_LosNode = nullptr;
 	}
-}
-void DrawLineCallback::creatNode()
-{
-	for (int i = 0; i < (int)m_numSpokes; i++)
+
+	if (m_pLs)
 	{
-		osg::ref_ptr<osgEarth::Symbology::LineString> _ls = new osgEarth::Symbology::LineString();
-		osg::ref_ptr<osgEarth::Features::Feature> _feature = new osgEarth::Features::Feature(_ls, m_spatRef);
-		_feature->geoInterp() = osgEarth::Features::GEOINTERP_GREAT_CIRCLE;
+		m_pLs.release();
+		m_pLs = nullptr;
+	}
 
-		osgEarth::Symbology::AltitudeSymbol* alt = _feature->style()->getOrCreate<osgEarth::Symbology::AltitudeSymbol>();
-		alt->clamping() = alt->CLAMP_TO_TERRAIN;
-		alt->technique() = alt->TECHNIQUE_GPU;
-
-		osgEarth::Symbology::RenderSymbol* render = _feature->style()->getOrCreate<osgEarth::Symbology::RenderSymbol>();
-		render->depthOffset()->enabled() = true;
-		render->depthOffset()->automatic() = true;
-
-		osgEarth::Symbology::LineSymbol* ls = _feature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
-		ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Red, 0.2f);
-		ls->stroke()->width() = 2.0f;
-
-		osg::ref_ptr<osgEarth::Annotation::FeatureNode> _featureNode = new osgEarth::Annotation::FeatureNode(_feature.get());
-		osgEarth::GLUtils::setLighting(_featureNode->getOrCreateStateSet(), osg::StateAttribute::OFF);
-		m_group->addChild(_featureNode.get());
+	if (m_bLosArry)
+	{
+		delete m_bLosArry;
+		m_bLosArry = nullptr;
 	}
 }
 
@@ -77,36 +83,54 @@ void DrawLineCallback::setStart(osg::Vec3d start)
 
 bool DrawLineCallback::run(osg::Object* object, osg::Object* data)
 {
+
 	osg::Group* _group = dynamic_cast<osg::Group*>(object);
-	osgEarth::Annotation::FeatureNode* _fNode = dynamic_cast<osgEarth::Annotation::FeatureNode*>(_group->getChild(m_NodeCount));
 
 	double _clat = 0.0, _clon = 0.0;
 	double _angle = m_delta * (double)m_NodeCount + m_angle;
-
-	int sum_false = 0;
-	int sum_true = 0;
-	for (unsigned int i = 0; i <= m_numSegment; i++)
+	for (unsigned int i = 0; i < m_numSegment; i++)
 	{
 		osgEarth::GeoMath::destination(m_lat, m_lon, _angle, m_tempDis * i, _clat, _clon);
-		osgEarth::GeoPoint _end(m_spatRef->getGeographicSRS(), osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), 0.0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
-		// 构造视线
+		osgEarth::GeoPoint _end(m_spatRef->getGeographicSRS(), osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), 1.0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
+
+		m_pLs[m_NodeCount].push_back(_end.vec3d());
+
 		m_LosNode->setEnd(_end);
-		_fNode->getFeature()->getGeometry()->push_back(_end.vec3d());	
-		// 无障碍
-		if (m_LosNode->getHasLOS())
+		m_bLosArry[m_NodeCount][i] = m_LosNode->getHasLOS();
+	}
+
+	bool _curLos = m_bLosArry[m_NodeCount][0];
+	osg::Vec3d _lastPoint(m_start.x(), m_start.y(), m_start.z());
+
+	for (unsigned int i = 0; i < m_numSegment; i++)
+	{
+		if (_curLos != m_bLosArry[m_NodeCount][i])
 		{
-			sum_true += 1;
-		}
-		// 有障碍
-		else
-		{
-			sum_false += 1;
+			osg::ref_ptr<osgEarth::Symbology::LineString> _ls = new osgEarth::Symbology::LineString();
+			osg::ref_ptr<osgEarth::Features::Feature> _feature = new osgEarth::Features::Feature(_ls, m_spatRef);
+			osg::ref_ptr<osgEarth::Annotation::FeatureNode> _featureNode = new osgEarth::Annotation::FeatureNode(_feature.get());
+			m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->color() = _curLos ? osgEarth::Symbology::Color::Green : osgEarth::Symbology::Color::Red;
+			_featureNode->setStyle(m_lineStyle);
+			_feature->getGeometry()->push_back(_lastPoint);
+			_feature->getGeometry()->push_back(m_pLs[m_NodeCount].at(i)); 
+			m_group->addChild(_featureNode.get());
+
+			_lastPoint = m_pLs[m_NodeCount].at(i);
+			_curLos = m_bLosArry[m_NodeCount][i];
 		}
 	}
-	//std::cout << "sum_true = " << sum_true << "   sum_false = " << sum_false << std::endl;
-	_fNode->dirty();
+
+	osg::ref_ptr<osgEarth::Symbology::LineString> _ls = new osgEarth::Symbology::LineString();
+	osg::ref_ptr<osgEarth::Features::Feature> _feature = new osgEarth::Features::Feature(_ls, m_spatRef);
+	osg::ref_ptr<osgEarth::Annotation::FeatureNode> _featureNode = new osgEarth::Annotation::FeatureNode(_feature.get());
+	m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->color() = _curLos ? osgEarth::Symbology::Color::Green : osgEarth::Symbology::Color::Red;
+	_featureNode->setStyle(m_lineStyle);
+	_feature->getGeometry()->push_back(_lastPoint);
+	_feature->getGeometry()->push_back(m_pLs[m_NodeCount].at(m_numSegment - 1));
+	m_group->addChild(_featureNode.get());
+
 	m_NodeCount++;
-	if (m_NodeCount >= _group->getNumChildren())
+	if (m_NodeCount == m_numSpokes)
 	{
 		_group->removeUpdateCallback(this);
 		return false;

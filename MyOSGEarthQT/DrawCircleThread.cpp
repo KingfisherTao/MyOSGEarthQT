@@ -42,7 +42,6 @@ void DrawCircleThread::creatNode()
 		osgEarth::Symbology::LineSymbol* ls = _feature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
 		ls->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 0.2f);
 		ls->stroke()->width() = 2.0f;
-		ls->tessellation() = 150;
 
 		osg::ref_ptr<osgEarth::Annotation::FeatureNode> _featureNode = new osgEarth::Annotation::FeatureNode(_feature.get());
 		osgEarth::GLUtils::setLighting(_featureNode->getOrCreateStateSet(), osg::StateAttribute::OFF);
@@ -75,12 +74,6 @@ void DrawCircleThread::run()
 		}
 		_fNode->dirty();
 	}
-
-	//while (m_pLT->isRunning())
-	{
-	//	OpenThreads::Thread::YieldCurrentThread();
-	}
-	//m_losGroup->addChild(m_group.get());
 }
 
 void DrawCircleThread::clear()

@@ -267,7 +267,6 @@ public:
 		osgEarth::Symbology::LineSymbol* ls = style.getOrCreateSymbol<osgEarth::Symbology::LineSymbol>();
 		ls->stroke()->color() = osgEarth::Symbology::Color::Red;
 		ls->stroke()->width() = 3.0f;
-		ls->tessellationSize()->set(100.0, osgEarth::Symbology::Units::KILOMETERS);
 
 		osgEarth::Symbology::AltitudeSymbol* alt = style.getOrCreate<osgEarth::Symbology::AltitudeSymbol>();
 		alt->clamping() = alt->CLAMP_TO_TERRAIN;
