@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -97,7 +97,7 @@ osgEarthUtil.lib
     <ClCompile Include="DrawLineCallback.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyOSGEarthQT.cpp" />
-    <ClCompile Include="osgQtView.cpp" />
+    <ClCompile Include="osgqtview.cpp" />
     <ClCompile Include="PickEvent.cpp" />
     <ClCompile Include="SetLosHeight.cpp" />
   </ItemGroup>
@@ -115,7 +115,7 @@ osgEarthUtil.lib
     <ClInclude Include="CReferenceArea.h" />
     <ClInclude Include="DrawCircleThread.h" />
     <ClInclude Include="DrawLineCallback.h" />
-    <ClInclude Include="osgQtView.h" />
+    <ClInclude Include="osgqtview.h" />
     <ClInclude Include="PickEvent.h" />
     <QtMoc Include="SetLosHeight.h" />
   </ItemGroup>

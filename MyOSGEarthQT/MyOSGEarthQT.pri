@@ -10,7 +10,7 @@ message("You are running qmake on a generated .pro file. This may not work!")
 HEADERS += ./CReferenceArea.h \
     ./DrawCircleThread.h \
     ./DrawLineCallback.h \
-    ./osgQtView.h \
+    ./osgqtview.h \
     ./PickEvent.h \
     ./MyOSGEarthQT.h \
     ./SetLosHeight.h
@@ -19,7 +19,7 @@ SOURCES += ./CReferenceArea.cpp \
     ./DrawLineCallback.cpp \
     ./main.cpp \
     ./MyOSGEarthQT.cpp \
-    ./osgQtView.cpp \
+    ./osgqtview.cpp \
     ./PickEvent.cpp \
     ./SetLosHeight.cpp
 FORMS += ./MyOSGEarthQT.ui \

@@ -2,7 +2,7 @@
 #include <osgEarthFeatures/Feature>
 #include <osgEarthAnnotation/FeatureNode>
 
-// 鼠标事件中，圆形选框
+// 榧犳爣浜嬩欢涓紝鍦嗗舰閫夋
 class CReferenceArea
 {
 

@@ -1,4 +1,4 @@
-﻿#include "MyOSGEarthQT.h"
+#include "MyOSGEarthQT.h"
 #include <QLabel>
 #include <osg/Depth>
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <QtWidgets/QMainWindow>
 
 #include "ui_MyOSGEarthQT.h"

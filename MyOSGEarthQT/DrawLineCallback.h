@@ -3,7 +3,7 @@
 #include <osgEarthAnnotation/FeatureNode>
 #include <osgEarthUtil/LinearLineOfSight>
 
-// 这是小陈起的名字 DrawLineThread 后面 由于重写成了回调形式，更名为 DrawLineCallback
+// 杩欐槸灏忛檲璧风殑鍚嶅瓧 DrawLineThread 鍚庨潰 鐢变簬閲嶅啓鎴愪簡鍥炶皟褰㈠紡锛屾洿鍚嶄负 DrawLineCallback
 class DrawLineCallback : public osg::Callback
 {
 public:
@@ -15,12 +15,13 @@ public:
 	void clear();
 
 private:
-	osg::ref_ptr<osgEarth::MapNode>							m_mapNode;
-	const osgEarth::SpatialReference*						m_spatRef;
-	osg::ref_ptr<osg::Group>								m_group;
-	osg::ref_ptr<osgEarth::Symbology::LineString>			m_pLs;
-	osg::ref_ptr<osgEarth::Util::LinearLineOfSightNode>		m_LosNode;
-	osgEarth::Annotation::Style								m_lineStyle;
+	osg::ref_ptr<osgEarth::MapNode>								m_mapNode;
+	const osgEarth::SpatialReference*							m_spatRef;
+	osg::ref_ptr<osg::Group>									m_group;
+	//osgEarth::Symbology::LineString*							m_pLs;
+	std::vector<osgEarth::Symbology::LineString*>				m_pLs;
+	osg::ref_ptr<osgEarth::Util::LinearLineOfSightNode>			m_LosNode;
+	osgEarth::Annotation::Style									m_lineStyle;
 
 	osg::Vec3d	m_start;
 	osg::Vec4	m_goodColor;
