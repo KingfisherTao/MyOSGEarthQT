@@ -7,7 +7,8 @@
 class DrawLineCallback : public osg::Callback
 {
 public:
-	DrawLineCallback(osg::Vec3d start, double angle, double radius, double numSpokes, float losHeight, osgEarth::MapNode* mapNode);
+
+	DrawLineCallback(osg::Vec3d start, double angle, double radius, double numSpokes, double numSegment, float losHeight, osgEarth::MapNode* mapNode);
 	virtual ~DrawLineCallback();
 	inline osg::Group* get() { return m_group; }
 	inline void setStart(osg::Vec3d start);
@@ -15,11 +16,12 @@ public:
 	void clear();
 
 private:
+
 	osg::ref_ptr<osgEarth::MapNode>								m_mapNode;
 	const osgEarth::SpatialReference*							m_spatRef;
 	osg::ref_ptr<osg::Group>									m_group;
 	//osgEarth::Symbology::LineString*							m_pLs;
-	std::vector<osgEarth::Symbology::LineString*>				m_pLs;
+	std::vector<osgEarth::Symbology::LineString*>				m_vLs;
 	osg::ref_ptr<osgEarth::Util::LinearLineOfSightNode>			m_LosNode;
 	osgEarth::Annotation::Style									m_lineStyle;
 

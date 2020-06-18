@@ -57,6 +57,7 @@
      <string>参数设置</string>
     </property>
     <addaction name="SetLosHeight"/>
+    <addaction name="ViewshedPara"/>
    </widget>
    <addaction name="Analysis"/>
    <addaction name="ParamSetting"/>
@@ -102,8 +103,11 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>雷达分析</string>
+    <string>雷达分析(待开发)</string>
    </property>
    <property name="toolTip">
     <string>雷达分析</string>
@@ -126,6 +130,11 @@
   <action name="SetLosHeight">
    <property name="text">
     <string>设置视高</string>
+   </property>
+  </action>
+  <action name="ViewshedPara">
+   <property name="text">
+    <string>视域分析</string>
    </property>
   </action>
  </widget>

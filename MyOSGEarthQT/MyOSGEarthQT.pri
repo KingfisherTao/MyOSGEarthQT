@@ -13,6 +13,7 @@ HEADERS += ./CReferenceArea.h \
     ./osgqtview.h \
     ./PickEvent.h \
     ./MyOSGEarthQT.h \
+    ./ViewshedPara.h \
     ./SetLosHeight.h
 SOURCES += ./CReferenceArea.cpp \
     ./DrawCircleThread.cpp \
@@ -21,7 +22,9 @@ SOURCES += ./CReferenceArea.cpp \
     ./MyOSGEarthQT.cpp \
     ./osgqtview.cpp \
     ./PickEvent.cpp \
-    ./SetLosHeight.cpp
+    ./SetLosHeight.cpp \
+    ./ViewshedPara.cpp
 FORMS += ./MyOSGEarthQT.ui \
-    ./SetLosHeight.ui
+    ./SetLosHeight.ui \
+    ./ViewshedPara.ui
 RESOURCES += MyOSGEarthQT.qrc

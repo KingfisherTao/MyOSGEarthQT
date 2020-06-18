@@ -49,6 +49,9 @@
     <ClCompile Include="DrawLineCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ViewshedPara.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyOSGEarthQT.h">
@@ -57,12 +60,18 @@
     <QtMoc Include="SetLosHeight.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="ViewshedPara.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="MyOSGEarthQT.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="SetLosHeight.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ViewshedPara.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

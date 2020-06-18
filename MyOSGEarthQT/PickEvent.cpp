@@ -1,6 +1,4 @@
 ﻿#include "PickEvent.h"
-#include <qDebug>
-
 
 PickEvent::PickEvent(QLabel* label, osgEarth::MapNode* mapNode, osg::Group* losGroup) :
 	m_ActionEvent(EnumActionEvent::ActionNull),
@@ -9,13 +7,15 @@ PickEvent::PickEvent(QLabel* label, osgEarth::MapNode* mapNode, osg::Group* losG
 	m_losGroup(losGroup),
 	m_bFirstClick(false),
 	m_bLastPoint(false),
-	m_losHeight(2.0),
+	m_ui_losHeight(2.0),
+	m_ui_numSpokes(200),
+	m_ui_numSegment(200),
 	m_mapName(QString::fromUtf8(mapNode->getMapSRS()->getName().c_str())),
 	m_csysTitle(QString::fromLocal8Bit("坐标:"))
 {
 	m_spatRef = m_mapNode->getMapSRS();
 	// 剖面计算器
-	m_Calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode);
+	//m_Calculator = new osgEarth::Util::TerrainProfileCalculator(m_mapNode);
 
 	//m_curRosNode = NULL;
 
@@ -108,7 +108,7 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 		{
 			if (m_bFirstClick)
 			{
-				auto _start = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), m_losHeight, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
+				auto _start = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), m_ui_losHeight, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
 				m_curLosNode = new osgEarth::Util::LinearLineOfSightNode(m_mapNode);
 				m_curLosNode->setDisplayMode(osgEarth::Util::LineOfSight::DisplayMode::MODE_SPLIT);
 				m_curLosNode->setStart(_start);
@@ -174,7 +174,12 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 				auto _angle = osgEarth::GeoMath::bearing(osg::DegreesToRadians(_start.y()), osg::DegreesToRadians(_start.x()),
 														osg::DegreesToRadians(_end.y()), osg::DegreesToRadians(_end.x()));
 
-				m_pLT = new DrawLineCallback(LastPoint, _angle, osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 150.0, m_losHeight, m_mapNode);
+				m_pLT = new DrawLineCallback(LastPoint, 
+											_angle, 
+											osgEarth::GeoMath::distance(LastPoint, Point, m_spatRef), 
+											(double)m_ui_numSpokes,
+											(double)m_ui_numSegment, 
+											m_ui_losHeight, m_mapNode);
 				m_losGroup->addChild(m_pLT->get());
 				m_vLT.push_back(m_pLT);
 
@@ -217,9 +222,6 @@ void PickEvent::pickMove(osg::Vec3d Point)
 			{
 				osgEarth::GeoPoint _end(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), 0.0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
 				m_curLosNode->setEnd(_end);
-
-				qDebug() << "m_LosNode->getHasLOS() = " << m_curLosNode->getHasLOS();
-
 			}
 		}break;
 		// 视域分析
@@ -302,5 +304,11 @@ osg::Vec3d PickEvent::Screen2Geo(float x, float y)
 
 void PickEvent::setLosHeight(float height)
 {
-	m_losHeight = height;
+	m_ui_losHeight = height;
+}
+
+void PickEvent::setViewshedPara(int numSpokes, int numSegment)
+{
+	m_ui_numSpokes = numSpokes;
+	m_ui_numSegment = numSegment;
 }

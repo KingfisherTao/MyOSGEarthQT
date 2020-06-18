@@ -1,15 +1,14 @@
-#include "DrawLineCallback.h"
+﻿#include "DrawLineCallback.h"
 #include <osgEarth/GLUtils>
-#include <qDebug>
 
-DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius, double numSpokes, float losHeight, osgEarth::MapNode* mapNode):
+DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius, double numSpokes, double numSegment, float losHeight, osgEarth::MapNode* mapNode):
 	m_angle(angle),
 	m_radius(radius),
 	m_numSpokes(numSpokes), 
 	m_losHeight(losHeight),
 	m_mapNode(mapNode),
 	m_spatRef(mapNode->getMapSRS()),
-	m_numSegment(150.0),
+	m_numSegment(numSegment),
 	m_goodColor(0.0f, 1.0f, 0.0f, 1.0f),
 	m_badColor(1.0f, 0.0f, 0.0f, 1.0f)
 {
@@ -17,10 +16,10 @@ DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius
 	m_tempDis = m_radius / (double)m_numSegment;
 	m_NodeCount = 0;
 
-	//m_pLs = new osgEarth::Symbology::LineString[m_numSpokes]; // gcc error
+	//m_pLs = new osgEarth::Symbology::LineString[m_numSpokes]; // 这样写在 GCC 下无法编译过
 	for (int i = 0; i < m_numSpokes; i++)
 	{
-		m_pLs.push_back(new osgEarth::Symbology::LineString());
+		m_vLs.push_back(new osgEarth::Symbology::LineString());
 	}
 	m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 1.0;
 	m_lineStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->clamping() = osgEarth::Symbology::AltitudeSymbol::CLAMP_TO_TERRAIN;
@@ -71,7 +70,7 @@ DrawLineCallback::~DrawLineCallback()
 		m_LosNode = nullptr;
 	}
 
-	for (std::vector<osgEarth::Symbology::LineString*>::iterator it = m_pLs.begin(); it != m_pLs.end(); it++)
+	for (std::vector<osgEarth::Symbology::LineString*>::iterator it = m_vLs.begin(); it != m_vLs.end(); it++)
 	{
 		if (nullptr != *it)
 		{
@@ -79,7 +78,7 @@ DrawLineCallback::~DrawLineCallback()
 			*it = nullptr;
 		}
 	}
-	m_pLs.clear();
+	m_vLs.clear();
 
 	if (m_bLosArry)
 	{
@@ -111,7 +110,7 @@ bool DrawLineCallback::run(osg::Object* object, osg::Object* data)
 		osgEarth::GeoMath::destination(m_lat, m_lon, _angle, m_tempDis * i, _clat, _clon);
 		osgEarth::GeoPoint _end(m_spatRef->getGeographicSRS(), osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), 1.0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);
 
-		m_pLs[m_NodeCount]->push_back(_end.vec3d());
+		m_vLs[m_NodeCount]->push_back(_end.vec3d());
 
 		m_LosNode->setEnd(_end);
 		m_bLosArry[m_NodeCount][i] = m_LosNode->getHasLOS();
@@ -130,10 +129,10 @@ bool DrawLineCallback::run(osg::Object* object, osg::Object* data)
 			m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->color() = _curLos ? osgEarth::Symbology::Color::Green : osgEarth::Symbology::Color::Red;
 			_featureNode->setStyle(m_lineStyle);
 			_feature->getGeometry()->push_back(_lastPoint);
-			_feature->getGeometry()->push_back(m_pLs[m_NodeCount]->at(i));
+			_feature->getGeometry()->push_back(m_vLs[m_NodeCount]->at(i));
 			m_group->addChild(_featureNode.get());
 
-			_lastPoint = m_pLs[m_NodeCount]->at(i);
+			_lastPoint = m_vLs[m_NodeCount]->at(i);
 			_curLos = m_bLosArry[m_NodeCount][i];
 		}
 	}
@@ -144,7 +143,7 @@ bool DrawLineCallback::run(osg::Object* object, osg::Object* data)
 	m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->color() = _curLos ? osgEarth::Symbology::Color::Green : osgEarth::Symbology::Color::Red;
 	_featureNode->setStyle(m_lineStyle);
 	_feature->getGeometry()->push_back(_lastPoint);
-	_feature->getGeometry()->push_back(m_pLs[m_NodeCount]->at(m_numSegment - 1));
+	_feature->getGeometry()->push_back(m_vLs[m_NodeCount]->at(m_numSegment - 1));
 	m_group->addChild(_featureNode.get());
 
 	m_NodeCount++;

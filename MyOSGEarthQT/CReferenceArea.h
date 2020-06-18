@@ -5,8 +5,8 @@
 // 鼠标事件中，圆形选框
 class CReferenceArea
 {
-
 public:
+
 	CReferenceArea(osgEarth::MapNode* MapNode);
 	virtual ~CReferenceArea() {}
 

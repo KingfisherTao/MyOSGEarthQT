@@ -7,7 +7,7 @@ osgQtView::osgQtView(QWidget *parent, Qt::WindowFlags f, osgViewer::ViewerBase::
 {
 	setThreadingModel(threadingModel);
 	setKeyEventSetsDone(0);
-	m_viewwidget = dynamic_cast<QWidget*>(addViewWidget(createGraphicsWindow(0, 0, 800, 600, "", true)));
+	m_viewwidget = dynamic_cast<QWidget*>(addViewWidget(createGraphicsWindow(0, 0, 1204, 768, "", true)));
 	m_gridlayout = new QGridLayout(this);
 	m_gridlayout->addWidget(m_viewwidget);
 
@@ -71,6 +71,5 @@ osg::ref_ptr<osg::Camera> osgQtView::getCamera()
 
 void osgQtView::paintEvent(QPaintEvent * event)
 {
-
 	frame();
 }

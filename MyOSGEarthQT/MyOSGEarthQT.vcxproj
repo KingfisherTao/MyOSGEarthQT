@@ -100,6 +100,7 @@ osgEarthUtil.lib
     <ClCompile Include="osgqtview.cpp" />
     <ClCompile Include="PickEvent.cpp" />
     <ClCompile Include="SetLosHeight.cpp" />
+    <ClCompile Include="ViewshedPara.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyOSGEarthQT.h" />
@@ -107,6 +108,7 @@ osgEarthUtil.lib
   <ItemGroup>
     <QtUic Include="MyOSGEarthQT.ui" />
     <QtUic Include="SetLosHeight.ui" />
+    <QtUic Include="ViewshedPara.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="MyOSGEarthQT.qrc" />
@@ -117,6 +119,7 @@ osgEarthUtil.lib
     <ClInclude Include="DrawLineCallback.h" />
     <ClInclude Include="osgqtview.h" />
     <ClInclude Include="PickEvent.h" />
+    <QtMoc Include="ViewshedPara.h" />
     <QtMoc Include="SetLosHeight.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

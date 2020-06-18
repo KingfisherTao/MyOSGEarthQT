@@ -70,12 +70,66 @@ win32 {
                 "E:\OSG\OpenSceneGraphEarth\include"
 }
 
-unix {
+unix 
+        LIBS += -L"/home/tao/O/OpenSceneGraph-OpenSceneGraph-3.6.4/lib" \
+                -L"/home/tao/O/osgQt/lib" \
+                -L"/home/tao/O/osgearth-osgearth-2.10.1/lib"
 
     CONFIG(debug, debug|release) {
         TARGET = $$join(TARGET,,,_d)
+                LIBS += -lOpenThreadsd \
+                        -losgd \
+                        -losgDBd \
+                        -losgFXd \
+                        -losgManipulatord \
+                        -losgParticled \
+                        -losgShadowd \
+                        -losgSimd \
+                        -losgTerraind \
+                        -losgUtild \
+                        -losgGAd \
+                        -losgViewerd \
+                        -losgTextd \
+                        -losgQt5d \
+                        -losgEarthd \
+                        -losgEarthUtild \
+                        -losgEarthFeaturesd \
+                        -losgEarthSymbologyd \
+                        -losgEarthAnnotationd
+
+                OBJECTS_DIR += debug
+                DESTDIR = ../x64/debug
+                CONFIG += debug console
     } else {
+
+                LIBS += -lOpenThreads \
+                        -losg \
+                        -losgDB \
+                        -losgFX \
+                        -losgManipulator \
+                        -losgParticle \
+                        -losgShadow \
+                        -losgSim \
+                        -losgTerrain \
+                        -losgUtil \
+                        -losgGA \
+                        -losgViewer \
+                        -losgText \
+                        -losgQt5 \
+                        -losgEarth \
+                        -losgEarthUtil \
+                        -losgEarthFeatures \
+                        -losgEarthSymbology \
+                        -losgEarthAnnotation
+
+                OBJECTS_DIR += Release
+                DESTDIR = ../x64/Release
+                CONFIG += release console
     }
+    INCLUDEPATH +="/home/tao/Qt5.14.0/5.14.0/gcc_64/include/QtOpenGL" \
+                "/home/tao/O/OpenSceneGraph-OpenSceneGraph-3.6.4/include" \
+                "/home/tao/O/osgQt/include" \
+                "/home/tao/O/osgearth-osgearth-2.10.1/include"
 }
 
 UI_DIR += .

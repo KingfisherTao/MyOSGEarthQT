@@ -16,6 +16,7 @@
 class osgQtView : public QWidget, public osgViewer::CompositeViewer
 {
 public:
+
 	osgQtView(QWidget* parent = 0, Qt::WindowFlags f = 0, osgViewer::ViewerBase::ThreadingModel threadingModel = osgViewer::CompositeViewer::SingleThreaded);
 	~osgQtView() {}
 
@@ -25,10 +26,11 @@ public:
 	osg::ref_ptr<osg::Camera> getCamera();
 	
 private:
+
 	virtual void update() { QWidget::update(); }
 	virtual void paintEvent(QPaintEvent* event);
-	QTimer m_timer;
-	QWidget* m_viewwidget;
+	QTimer							m_timer;
+	QWidget*						m_viewwidget;
 	osg::ref_ptr<osgViewer::Viewer> m_viewer;
-	QGridLayout* m_gridlayout;
+	QGridLayout*					m_gridlayout;
 };
