@@ -104,7 +104,7 @@ bool DrawLineCallback::run(osg::Object* object, osg::Object* data)
 	osg::Group* _group = dynamic_cast<osg::Group*>(object);
 
 	double _clat = 0.0, _clon = 0.0;
-	double _angle = m_delta * (double)m_NodeCount + m_angle;
+	double _angle = -m_delta * (double)m_NodeCount + m_angle;
 	for (unsigned int i = 0; i < m_numSegment; i++)
 	{
 		osgEarth::GeoMath::destination(m_lat, m_lon, _angle, m_tempDis * i, _clat, _clon);

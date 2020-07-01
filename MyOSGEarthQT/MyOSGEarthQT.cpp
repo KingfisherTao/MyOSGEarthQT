@@ -1,5 +1,4 @@
 ﻿#include "MyOSGEarthQT.h"
-#include <QLabel>
 #include <osg/Depth>
 
 MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)

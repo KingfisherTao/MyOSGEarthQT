@@ -22,7 +22,7 @@ public:
 
 	QWidget* addViewWidget(osgQt::GraphicsWindowQt* gw);
 	osgQt::GraphicsWindowQt* createGraphicsWindow(int x, int y, int w, int h, const std::string& name = "", bool windowDecoration = false);
-	osg::ref_ptr<osgViewer::View> getViewer();
+	osg::ref_ptr<osgViewer::Viewer> getViewer();
 	osg::ref_ptr<osg::Camera> getCamera();
 	
 private:

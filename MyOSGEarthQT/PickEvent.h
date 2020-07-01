@@ -1,7 +1,6 @@
 #pragma once
 #include "CReferenceArea.h"
 #include "DrawLineCallback.h"
-#include "DrawCircleThread.h"
 
 #include <osgGA/GUIEventHandler>
 #include <osgEarth/MapNode>
@@ -27,7 +26,7 @@ class PickEvent : public osgGA::GUIEventHandler
 public:
 
 	PickEvent(QLabel* label, osgEarth::MapNode* MapNode, osg::Group* losGroup);
-	~PickEvent();
+	~PickEvent() {};
 	virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa) override;
 	void setActionEvent(const EnumActionEvent &ae);
 	void setLosHeight(float height);
@@ -42,12 +41,10 @@ protected:
 	osg::Vec3d Screen2Geo(float x, float y);
 private:
 
-	CReferenceArea*								m_pFA;
+	//CReferenceArea*							m_pFA;
 	DrawLineCallback*							m_pLT;
-	DrawCircleThread*							m_pCT;
 
 	std::vector<DrawLineCallback*>				m_vLT;
-	std::vector<DrawCircleThread*>				m_vCT;
 
 	osg::ref_ptr<osgEarth::MapNode>				m_mapNode;
 	osg::ref_ptr<osgViewer::Viewer>				m_viewer;
@@ -56,9 +53,12 @@ private:
 	const osgEarth::SpatialReference*			m_spatRef;
 
 	osg::ref_ptr<osgEarth::Util::LinearLineOfSightNode>			m_curLosNode;
-	//osg::ref_ptr<osgEarth::Util::RadialLineOfSightNode>		m_curRosNode;
-	osg::ref_ptr<osgEarth::Annotation::CircleNode>				m_curCircleNode;
+
 	osgEarth::Symbology::Style									m_circleStyle;
+	osgEarth::Symbology::Style									m_circleOutLineStyle;
+	osg::ref_ptr<osgEarth::Annotation::CircleNode>				m_curCircleNode;
+	osg::ref_ptr<osgEarth::Annotation::CircleNode>				m_curCircleOutLine;
+	
 	//osg::ref_ptr<osgEarth::Util::TerrainProfileCalculator>	m_Calculator;
 	osg::ref_ptr<osgEarth::Annotation::FeatureNode>				m_featureNode;
 	osg::ref_ptr<osgEarth::Features::Feature>					m_feature;

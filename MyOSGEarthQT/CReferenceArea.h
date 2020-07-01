@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 #include <osgEarthFeatures/Feature>
 #include <osgEarthAnnotation/FeatureNode>
 
-// 鼠标事件中，圆形选框
+// 鼠标事件中，圆形选框 【已废弃】
 class CReferenceArea
 {
 public:

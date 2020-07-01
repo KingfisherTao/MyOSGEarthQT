@@ -15,17 +15,17 @@ CReferenceArea::CReferenceArea(osgEarth::MapNode* mapNode):
 	m_CircleFeature = new osgEarth::Features::Feature(new osgEarth::Symbology::LineString(), m_spatRef);
 	m_CircleFeature->geoInterp() = osgEarth::Features::GEOINTERP_GREAT_CIRCLE;
 
-	osgEarth::Symbology::AltitudeSymbol* alt_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::AltitudeSymbol>();
-	alt_Circle->clamping() = alt_Circle->CLAMP_TO_TERRAIN;
-	alt_Circle->technique() = alt_Circle->TECHNIQUE_DRAPE;
+	osgEarth::Symbology::AltitudeSymbol* _alt_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::AltitudeSymbol>();
+	_alt_Circle->clamping() = _alt_Circle->CLAMP_TO_TERRAIN;
+	_alt_Circle->technique() = _alt_Circle->TECHNIQUE_DRAPE;
 
-	osgEarth::Symbology::RenderSymbol* render_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::RenderSymbol>();
-	render_Circle->depthOffset()->enabled() = true;
-	render_Circle->depthOffset()->automatic() = true;
+	osgEarth::Symbology::RenderSymbol* _render_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::RenderSymbol>();
+	_render_Circle->depthOffset()->enabled() = true;
+	_render_Circle->depthOffset()->automatic() = true;
 
-	osgEarth::Symbology::LineSymbol* ls_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
-	ls_Circle->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 1.0f);
-	ls_Circle->stroke()->width() = 1.0f;
+	osgEarth::Symbology::LineSymbol* _ls_Circle = m_CircleFeature->style()->getOrCreate<osgEarth::Symbology::LineSymbol>();
+	_ls_Circle->stroke()->color() = osgEarth::Color(osgEarth::Color::Yellow, 1.0f);
+	_ls_Circle->stroke()->width() = 1.0f;
 
 	m_CircleNode = new osgEarth::Annotation::FeatureNode(m_CircleFeature.get());
 	osgEarth::GLUtils::setLighting(m_CircleNode->getOrCreateStateSet(), osg::StateAttribute::OFF);
@@ -36,9 +36,9 @@ void CReferenceArea::init()
 	if (m_numSpokes == 0.0)
 	{
 		// automatically calculate
-		const osgEarth::Distance radius = m_radius;
-		double segLen = radius.as(osgEarth::Units::METERS) / 8.0;
-		double circumference = 2 * osg::PI* radius.as(osgEarth::Units::METERS);
+		const osgEarth::Distance _radius = m_radius;
+		double segLen = _radius.as(osgEarth::Units::METERS) / 8.0;
+		double circumference = 2 * osg::PI* _radius.as(osgEarth::Units::METERS);
 		m_numSpokes = (unsigned)::ceil(circumference / segLen);
 		m_start_delta = osg::PI * 2.0 / m_numSpokes;
 	}
@@ -51,7 +51,7 @@ void CReferenceArea::init()
 	{
 		_angle = m_start_delta * (double)i;
 		osgEarth::GeoMath::destination(m_start_lat, m_start_lon, _angle, m_radius, _clat, _clon, m_spatRef->getEllipsoid()->getRadiusEquator());
-		m_CircleFeature->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), 0.0));
+		m_CircleFeature->getGeometry()->push_back(osg::Vec3d(osg::RadiansToDegrees(_clon), osg::RadiansToDegrees(_clat), 1.0));
 	}
 	m_CircleFeature->getGeometry()->push_back(m_CircleFeature->getGeometry()->front());
 	m_CircleNode->dirty();

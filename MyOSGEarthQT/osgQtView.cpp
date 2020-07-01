@@ -59,7 +59,7 @@ osgQt::GraphicsWindowQt *osgQtView::createGraphicsWindow(int x, int y, int w, in
 }
 
 
-osg::ref_ptr<osgViewer::View> osgQtView::getViewer()
+osg::ref_ptr<osgViewer::Viewer> osgQtView::getViewer()
 {
 	return m_viewer.get();
 }
