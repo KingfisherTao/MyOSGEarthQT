@@ -1,7 +1,6 @@
 #pragma once
 #include <QWidget>
 #include <QTimer>
-#include <QApplication>
 #include <QGridLayout>
 
 #include <osgViewer/CompositeViewer>

@@ -1,5 +1,9 @@
 ﻿#include "MyOSGEarthQT.h"
+#include "Compass.h"
+
 #include <osg/Depth>
+#include <osgEarthUtil/MouseCoordsTool>
+#include <osgEarthUtil/Controls>
 
 MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	: QMainWindow(parent)
@@ -46,6 +50,19 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	m_losGroup->getOrCreateStateSet()->setAttributeAndModes(new osg::Depth(osg::Depth::Function::ALWAYS));
 	m_mapNode->addChild(m_losGroup);
 
+	// 创建部分UI
+	osgEarth::Util::ControlCanvas* canvas = osgEarth::Util::ControlCanvas::getOrCreate(ui.openGLWidget->getViewer());
+	osgEarth::Util::LabelControl* readout = new osgEarth::Util::LabelControl();
+	readout->setBackColor(osgEarth::Color(osgEarth::Color::Black, 0.8));
+	readout->setHorizAlign(osgEarth::Util::Control::ALIGN_RIGHT);
+	readout->setVertAlign(osgEarth::Util::Control::ALIGN_BOTTOM);
+
+	osgEarth::Util::MouseCoordsTool* mcTool = new osgEarth::Util::MouseCoordsTool(m_mapNode);
+	mcTool->addCallback(new osgEarth::Util::MouseCoordsLabelCallback(readout));
+	ui.openGLWidget->getViewer()->addEventHandler(mcTool);
+	canvas->addControl(readout);
+	m_world->addChild(canvas);
+
 	ui.openGLWidget->getViewer()->setSceneData(m_world.get());
 
 	connect(ui.VisibilityAnalysis, &QAction::triggered, this, &MyOSGEarthQT::on_VisibilityAnalysis);
@@ -61,6 +78,17 @@ MyOSGEarthQT::MyOSGEarthQT(QWidget *parent)
 	// 设置视点 测试用
 	//osg::ref_ptr<osgEarth::Util::EarthManipulator> em = dynamic_cast<osgEarth::Util::EarthManipulator*>(ui.openGLWidget->getViewer()->getCameraManipulator());
 	//em->setViewpoint(osgEarth::Viewpoint(NULL, 87.43, 27.18, 2060.66, -2.5, -10, 20000), 2);
+
+	// 添加一个指北针
+	osg::ref_ptr<Compass> compass = new Compass("../data/Compass/plate.png", "../data/Compass/needle.png");
+	compass->setMainCamera(ui.openGLWidget->getViewer()->getCamera());
+	m_world->addChild(compass.get());
+
+}
+
+MyOSGEarthQT::~MyOSGEarthQT()
+{
+
 }
 
 void MyOSGEarthQT::on_VisibilityAnalysis(bool checked)
@@ -117,7 +145,6 @@ void MyOSGEarthQT::on_ClearAnalysis()
 	m_PickEvent->setActionEvent(EnumActionEvent::ActionNull);
 
 	m_PickEvent->RemoveAnalysis();
-	m_world->removeChild(m_hud);
 
 }
 void MyOSGEarthQT::on_SetLosHeight()

@@ -21,7 +21,7 @@ DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius
 	{
 		m_vLs.push_back(new osgEarth::Symbology::LineString());
 	}
-	m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 1.0;
+	m_lineStyle.getOrCreate<osgEarth::Symbology::LineSymbol>()->stroke()->width() = 0.2;
 	m_lineStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->clamping() = osgEarth::Symbology::AltitudeSymbol::CLAMP_TO_TERRAIN;
 	m_lineStyle.getOrCreate<osgEarth::Symbology::AltitudeSymbol>()->technique() = osgEarth::Symbology::AltitudeSymbol::TECHNIQUE_DRAPE;
 	m_lineStyle.getOrCreate<osgEarth::Symbology::RenderSymbol>()->depthOffset()->automatic() = true;
@@ -31,13 +31,13 @@ DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius
 	m_LosNode->setTerrainOnly(true);
 	setStart(start);
 
-	// 初始化视线 bool 二维数组
-	//m_bLosArry = nullptr; 这样写在 GCC 下无法编译过
+	// 初始化视线 bool 二维数组 //这样写在 GCC 下无法编译过
+	m_bLosArry = nullptr; 
 	//m_bLosArry = new bool*[m_numSpokes];
 	//for (int i = 0; i < m_numSpokes; i++)
 	//{
 	//	m_bLosArry[i] = new bool[m_numSegment];
-	//}
+	//} 2021年5月补充 上面的写法关键问题是 [] 中用 double 类型进行了初始化， 只需要把 m_numSegment 类型从 double 改成 int 类型 就可以在 gcc 下进行编译
 
 	m_bLosArry = (bool **)malloc(sizeof(bool*) * m_numSpokes);    //分配指针数组
 	m_bLosArry[0] = (bool *)malloc(sizeof(bool) * m_numSpokes * m_numSegment);//一次性分配所有空间
@@ -52,7 +52,7 @@ DrawLineCallback::DrawLineCallback(osg::Vec3d start, double angle, double radius
 
 	// FeatureNode 添加的总group
 	m_group = new osg::Group();
-	osgEarth::GLUtils::setLighting(m_group->getOrCreateStateSet(), osg::StateAttribute::OFF);
+	//osgEarth::GLUtils::setLighting(m_group->getOrCreateStateSet(), osg::StateAttribute::OFF);
 	m_group->setUpdateCallback(this);
 }
 
@@ -102,7 +102,6 @@ bool DrawLineCallback::run(osg::Object* object, osg::Object* data)
 {
 
 	osg::Group* _group = dynamic_cast<osg::Group*>(object);
-
 	double _clat = 0.0, _clon = 0.0;
 	double _angle = -m_delta * (double)m_NodeCount + m_angle;
 	for (unsigned int i = 0; i < m_numSegment; i++)

@@ -92,6 +92,7 @@ osgEarthUtil.lib
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Compass.cpp" />
     <ClCompile Include="CReferenceArea.cpp" />
     <ClCompile Include="DrawCircleThread.cpp" />
     <ClCompile Include="DrawLineCallback.cpp" />
@@ -114,6 +115,7 @@ osgEarthUtil.lib
     <QtRcc Include="MyOSGEarthQT.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Compass.h" />
     <ClInclude Include="CReferenceArea.h" />
     <ClInclude Include="DrawCircleThread.h" />
     <ClInclude Include="DrawLineCallback.h" />

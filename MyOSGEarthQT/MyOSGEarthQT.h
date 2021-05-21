@@ -18,7 +18,7 @@ class MyOSGEarthQT : public QMainWindow
 public:
 
 	MyOSGEarthQT(QWidget *parent = Q_NULLPTR);
-	~MyOSGEarthQT() {}
+	~MyOSGEarthQT();
 	void sendLosHeight(float height);
 	void sendViewshedPara(int numSpokes, int numSegment);
 
@@ -37,7 +37,6 @@ private:
 	SetLosHeight*			sub_setLosHeight;
 	ViewshedPara*			sub_viewshedPara;
 
-	osg::Camera*					m_hud;
 	osg::ref_ptr<osgEarth::MapNode> m_mapNode;
 	osg::ref_ptr<osg::Group>		m_world;
 	osg::ref_ptr<osg::Group>		m_losGroup;

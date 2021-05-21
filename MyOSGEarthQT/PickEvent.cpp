@@ -1,4 +1,5 @@
 ﻿#include "PickEvent.h"
+#include <osgEarth/GLUtils>
 
 PickEvent::PickEvent(QLabel* label, osgEarth::MapNode* mapNode, osg::Group* losGroup) :
 	m_ActionEvent(EnumActionEvent::ActionNull),
@@ -129,6 +130,7 @@ void PickEvent::pickLeft(osg::Vec3d Point)
 
 				m_curCircleOutLine = new osgEarth::Annotation::CircleNode;
 				m_curCircleOutLine->setStyle(m_circleOutLineStyle);
+				osgEarth::GLUtils::setLighting(m_curCircleOutLine->getOrCreateStateSet(), osg::StateAttribute::OFF);
 				m_curCircleOutLine->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 
 				auto _centerPoint = osgEarth::GeoPoint(m_spatRef->getGeographicSRS(), Point.x(), Point.y(), 0, osgEarth::AltitudeMode::ALTMODE_RELATIVE);

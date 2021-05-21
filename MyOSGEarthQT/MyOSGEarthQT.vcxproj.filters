@@ -52,6 +52,9 @@
     <ClCompile Include="ViewshedPara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Compass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyOSGEarthQT.h">
@@ -94,6 +97,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DrawLineCallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Compass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

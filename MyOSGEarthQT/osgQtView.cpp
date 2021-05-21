@@ -1,17 +1,16 @@
-#include "osgQtView.h"
+#include "osgqtview.h"
 #include <osgEarthUtil/ExampleResources>
 #include <osgGA/StateSetManipulator>
+#include <osgEarthUtil/LogarithmicDepthBuffer>
 
 osgQtView::osgQtView(QWidget *parent, Qt::WindowFlags f, osgViewer::ViewerBase::ThreadingModel threadingModel) : 
 	QWidget(parent, f)
 {
 	setThreadingModel(threadingModel);
 	setKeyEventSetsDone(0);
-	m_viewwidget = dynamic_cast<QWidget*>(addViewWidget(createGraphicsWindow(0, 0, 1204, 768, "", true)));
+	m_viewwidget = dynamic_cast<QWidget*>(addViewWidget(createGraphicsWindow(0, 0, 1920, 1080, "", true)));
 	m_gridlayout = new QGridLayout(this);
 	m_gridlayout->addWidget(m_viewwidget);
-
-	m_viewwidget->show();
 
 	connect(&m_timer, &QTimer::timeout, this, &osgQtView::update);
 	m_timer.start(1);
@@ -34,6 +33,10 @@ QWidget *osgQtView::addViewWidget(osgQt::GraphicsWindowQt *gw)
 	const osg::GraphicsContext::Traits* traits = gw->getTraits();
 	camera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
 	camera->setProjectionMatrixAsPerspective(30.0, static_cast<double>(traits->width) / static_cast<double>(traits->height), 1.0, 10000.0);
+
+	osgEarth::Util::LogarithmicDepthBuffer logDepth;
+	logDepth.setUseFragDepth(false);
+	logDepth.install(camera);
 
 	gw->setTouchEventsEnabled(true);
 	return gw->getGLWidget();
